@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Prospect">
+<title>Prospect</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #000;
+    --bg2: #0a0a0a;
+    --surface: rgba(28,28,30,0.95);
+    --surface2: rgba(44,44,46,0.8);
+    --border: rgba(255,255,255,0.08);
+    --text: #fff;
+    --text2: rgba(255,255,255,0.55);
+    --text3: rgba(255,255,255,0.3);
+    --accent: #E1306C;
+    --accent2: #F77737;
+    --yellow: #FFD60A;
+    --green: #30D158;
+    --blue: #0A84FF;
+    --red: #FF453A;
+    --radius: 16px;
+    --safe-top: env(safe-area-inset-top, 44px);
+    --safe-bottom: env(safe-area-inset-bottom, 34px);
+  }
+
+- { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+background: var(–bg);
+color: var(–text);
+font-family: -apple-system, BlinkMacSystemFont, ‘SF Pro Display’, sans-serif;
+min-height: 100dvh;
+overflow: hidden;
+position: fixed;
+width: 100%;
+height: 100%;
+}
+
+/* ── APP SHELL ── */
+#app {
+display: flex;
+flex-direction: column;
+height: 100dvh;
+height: 100%;
+}
+
+/* ── HEADER ── */
+#header {
+padding: calc(var(–safe-top) + 10px) 20px 12px;
+background: rgba(0,0,0,0.85);
+backdrop-filter: blur(20px);
+-webkit-backdrop-filter: blur(20px);
+border-bottom: 1px solid var(–border);
+flex-shrink: 0;
+position: relative;
+z-index: 10;
+}
+
+.header-top {
+display: flex;
+align-items: center;
+justify-content: space-between;
+margin-bottom: 14px;
+}
+
+.app-title {
+font-size: 28px;
+font-weight: 700;
+letter-spacing: -0.5px;
+background: linear-gradient(135deg, #E1306C, #F77737);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+}
+
+.add-btn {
+width: 36px; height: 36px;
+background: linear-gradient(135deg, #E1306C, #F77737);
+border: none;
+border-radius: 50%;
+display: flex; align-items: center; justify-content: center;
+cursor: pointer;
+transition: transform 0.15s, opacity 0.15s;
+}
+.add-btn:active { transform: scale(0.9); opacity: 0.8; }
+.add-btn svg { width: 18px; height: 18px; fill: #fff; }
+
+/* ── TABS ── */
+.tabs {
+display: flex;
+gap: 6px;
+overflow-x: auto;
+scrollbar-width: none;
+padding-bottom: 2px;
+}
+.tabs::-webkit-scrollbar { display: none; }
+
+.tab {
+flex-shrink: 0;
+padding: 6px 14px;
+border-radius: 20px;
+font-size: 13px;
+font-weight: 600;
+border: none;
+cursor: pointer;
+transition: all 0.2s;
+display: flex;
+align-items: center;
+gap: 5px;
+}
+.tab.active { color: #fff; }
+.tab:not(.active) { background: rgba(255,255,255,0.07); color: var(–text2); }
+
+.tab[data-filter=“all”].active { background: rgba(255,255,255,0.15); }
+.tab[data-filter=“prospect”].active { background: var(–blue); }
+.tab[data-filter=“waiting”].active { background: var(–yellow); color: #000; }
+.tab[data-filter=“done”].active { background: var(–green); color: #000; }
+
+.tab-count {
+background: rgba(255,255,255,0.2);
+border-radius: 10px;
+padding: 1px 6px;
+font-size: 11px;
+min-width: 18px;
+text-align: center;
+}
+.tab[data-filter=“waiting”].active .tab-count,
+.tab[data-filter=“done”].active .tab-count { background: rgba(0,0,0,0.2); }
+
+/* ── LIST ── */
+#list-container {
+flex: 1;
+overflow-y: auto;
+-webkit-overflow-scrolling: touch;
+padding: 12px 16px;
+padding-bottom: calc(var(–safe-bottom) + 80px);
+}
+
+.empty-state {
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+gap: 12px;
+padding: 80px 40px;
+text-align: center;
+}
+.empty-icon { font-size: 48px; opacity: 0.4; }
+.empty-title { font-size: 17px; font-weight: 600; color: var(–text2); }
+.empty-sub { font-size: 14px; color: var(–text3); line-height: 1.5; }
+
+/* ── ACCOUNT CARD ── */
+.account-card {
+background: var(–surface);
+border-radius: var(–radius);
+margin-bottom: 10px;
+overflow: hidden;
+border: 1px solid var(–border);
+position: relative;
+transform: translateX(0);
+transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.card-inner {
+display: flex;
+align-items: center;
+padding: 14px 16px;
+gap: 13px;
+position: relative;
+z-index: 2;
+background: var(–surface);
+}
+
+.avatar {
+width: 46px; height: 46px;
+border-radius: 50%;
+background: linear-gradient(135deg, #E1306C, #F77737, #FCAF45);
+display: flex; align-items: center; justify-content: center;
+flex-shrink: 0;
+font-size: 18px;
+font-weight: 700;
+color: #fff;
+position: relative;
+}
+
+.avatar::after {
+content: ‘’;
+position: absolute;
+inset: -2px;
+border-radius: 50%;
+background: linear-gradient(135deg, #E1306C, #F77737, #FCAF45);
+z-index: -1;
+padding: 2px;
+}
+
+.avatar-inner {
+width: 42px; height: 42px;
+border-radius: 50%;
+background: linear-gradient(135deg, #E1306C, #F77737, #FCAF45);
+display: flex; align-items: center; justify-content: center;
+font-size: 18px;
+font-weight: 700;
+color: #fff;
+}
+
+.card-info { flex: 1; min-width: 0; }
+
+.card-username {
+font-size: 15px;
+font-weight: 600;
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
+}
+
+.card-note {
+font-size: 12px;
+color: var(–text2);
+margin-top: 2px;
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
+}
+
+.card-actions {
+display: flex;
+align-items: center;
+gap: 8px;
+flex-shrink: 0;
+}
+
+.status-badge {
+padding: 4px 10px;
+border-radius: 20px;
+font-size: 11px;
+font-weight: 600;
+white-space: nowrap;
+}
+.status-badge.prospect { background: rgba(10,132,255,0.2); color: var(–blue); }
+.status-badge.waiting { background: rgba(255,214,10,0.15); color: var(–yellow); }
+.status-badge.done { background: rgba(48,209,88,0.15); color: var(–green); }
+
+.card-chevron {
+color: var(–text3);
+font-size: 16px;
+}
+
+/* Swipe actions */
+.swipe-actions {
+position: absolute;
+right: 0; top: 0; bottom: 0;
+display: flex;
+align-items: stretch;
+z-index: 1;
+}
+
+.swipe-btn {
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+padding: 0 18px;
+border: none;
+cursor: pointer;
+font-size: 11px;
+font-weight: 600;
+gap: 4px;
+min-width: 70px;
+}
+.swipe-btn span { font-size: 20px; }
+.swipe-btn.delete { background: var(–red); color: #fff; }
+.swipe-btn.open { background: var(–blue); color: #fff; border-radius: 0 var(–radius) var(–radius) 0; }
+
+/* ── PASTE BAR ── */
+#paste-bar {
+position: fixed;
+bottom: calc(var(–safe-bottom) + 16px);
+left: 16px; right: 16px;
+background: rgba(28,28,30,0.95);
+backdrop-filter: blur(20px);
+-webkit-backdrop-filter: blur(20px);
+border-radius: 18px;
+border: 1px solid var(–border);
+display: flex;
+align-items: center;
+padding: 12px 16px;
+gap: 12px;
+z-index: 20;
+transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+transform: translateY(0);
+}
+
+#paste-bar.hidden {
+transform: translateY(120px);
+opacity: 0;
+pointer-events: none;
+}
+
+.paste-icon {
+width: 38px; height: 38px;
+background: linear-gradient(135deg, #E1306C, #F77737);
+border-radius: 10px;
+display: flex; align-items: center; justify-content: center;
+flex-shrink: 0;
+font-size: 18px;
+}
+
+.paste-info { flex: 1; min-width: 0; }
+.paste-label { font-size: 11px; color: var(–text3); font-weight: 500; }
+.paste-username { font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.paste-confirm {
+background: linear-gradient(135deg, #E1306C, #F77737);
+border: none;
+border-radius: 12px;
+color: #fff;
+font-size: 13px;
+font-weight: 700;
+padding: 8px 16px;
+cursor: pointer;
+transition: transform 0.15s, opacity 0.15s;
+}
+.paste-confirm:active { transform: scale(0.95); opacity: 0.85; }
+
+.paste-dismiss {
+background: none;
+border: none;
+color: var(–text3);
+font-size: 20px;
+cursor: pointer;
+padding: 4px;
+line-height: 1;
+}
+
+/* ── MODAL ── */
+#modal-overlay {
+position: fixed;
+inset: 0;
+background: rgba(0,0,0,0.6);
+backdrop-filter: blur(10px);
+-webkit-backdrop-filter: blur(10px);
+z-index: 100;
+display: flex;
+align-items: flex-end;
+transition: opacity 0.25s;
+opacity: 0;
+pointer-events: none;
+}
+#modal-overlay.visible { opacity: 1; pointer-events: all; }
+
+#modal {
+background: rgba(28,28,30,0.98);
+backdrop-filter: blur(40px);
+-webkit-backdrop-filter: blur(40px);
+border-radius: 24px 24px 0 0;
+border: 1px solid var(–border);
+border-bottom: none;
+width: 100%;
+padding: 12px 20px calc(var(–safe-bottom) + 20px);
+transform: translateY(100%);
+transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+#modal-overlay.visible #modal { transform: translateY(0); }
+
+.modal-handle {
+width: 36px; height: 4px;
+background: rgba(255,255,255,0.2);
+border-radius: 2px;
+margin: 0 auto 20px;
+}
+
+.modal-title {
+font-size: 20px;
+font-weight: 700;
+margin-bottom: 20px;
+letter-spacing: -0.3px;
+}
+
+.modal-field { margin-bottom: 14px; }
+.modal-label {
+font-size: 12px;
+font-weight: 600;
+color: var(–text3);
+text-transform: uppercase;
+letter-spacing: 0.5px;
+margin-bottom: 6px;
+}
+
+.modal-input {
+width: 100%;
+background: rgba(255,255,255,0.06);
+border: 1px solid var(–border);
+border-radius: 12px;
+padding: 13px 15px;
+color: #fff;
+font-size: 15px;
+font-family: inherit;
+outline: none;
+transition: border-color 0.2s;
+resize: none;
+}
+.modal-input:focus { border-color: var(–accent); }
+.modal-input::placeholder { color: var(–text3); }
+
+textarea.modal-input { min-height: 80px; }
+
+.status-grid {
+display: grid;
+grid-template-columns: 1fr 1fr 1fr;
+gap: 8px;
+}
+
+.status-opt {
+padding: 10px 8px;
+border-radius: 12px;
+border: 2px solid transparent;
+background: rgba(255,255,255,0.05);
+text-align: center;
+cursor: pointer;
+transition: all 0.2s;
+font-size: 12px;
+font-weight: 600;
+}
+.status-opt .s-icon { font-size: 20px; display: block; margin-bottom: 3px; }
+.status-opt.active.prospect { border-color: var(–blue); background: rgba(10,132,255,0.15); color: var(–blue); }
+.status-opt.active.waiting { border-color: var(–yellow); background: rgba(255,214,10,0.1); color: var(–yellow); }
+.status-opt.active.done { border-color: var(–green); background: rgba(48,209,88,0.1); color: var(–green); }
+
+.modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+
+.btn-cancel {
+flex: 1;
+padding: 15px;
+border-radius: 14px;
+border: none;
+background: rgba(255,255,255,0.07);
+color: var(–text2);
+font-size: 15px;
+font-weight: 600;
+cursor: pointer;
+font-family: inherit;
+}
+
+.btn-save {
+flex: 2;
+padding: 15px;
+border-radius: 14px;
+border: none;
+background: linear-gradient(135deg, #E1306C, #F77737);
+color: #fff;
+font-size: 15px;
+font-weight: 700;
+cursor: pointer;
+font-family: inherit;
+transition: opacity 0.2s;
+}
+.btn-save:active { opacity: 0.8; }
+
+/* Detail modal */
+.detail-avatar {
+width: 70px; height: 70px;
+border-radius: 50%;
+background: linear-gradient(135deg, #E1306C, #F77737, #FCAF45);
+display: flex; align-items: center; justify-content: center;
+font-size: 28px;
+font-weight: 700;
+color: #fff;
+margin: 0 auto 14px;
+}
+
+.detail-username {
+font-size: 22px;
+font-weight: 700;
+text-align: center;
+margin-bottom: 4px;
+}
+
+.detail-link {
+text-align: center;
+color: var(–blue);
+font-size: 14px;
+margin-bottom: 20px;
+display: block;
+}
+
+.detail-note-box {
+background: rgba(255,255,255,0.05);
+border-radius: 12px;
+padding: 12px 14px;
+font-size: 14px;
+color: var(–text2);
+line-height: 1.5;
+margin-bottom: 16px;
+min-height: 44px;
+}
+
+.detail-status-row {
+display: flex;
+gap: 8px;
+margin-bottom: 16px;
+}
+
+.detail-status-btn {
+flex: 1;
+padding: 12px 6px;
+border-radius: 12px;
+border: 2px solid transparent;
+background: rgba(255,255,255,0.05);
+color: var(–text2);
+font-size: 12px;
+font-weight: 700;
+cursor: pointer;
+font-family: inherit;
+transition: all 0.2s;
+text-align: center;
+}
+.detail-status-btn .s-icon { font-size: 18px; display: block; margin-bottom: 2px; }
+.detail-status-btn.active.prospect { border-color: var(–blue); background: rgba(10,132,255,0.15); color: var(–blue); }
+.detail-status-btn.active.waiting { border-color: var(–yellow); background: rgba(255,214,10,0.1); color: var(–yellow); }
+.detail-status-btn.active.done { border-color: var(–green); background: rgba(48,209,88,0.1); color: var(–green); }
+
+.detail-row {
+display: flex;
+gap: 8px;
+}
+
+.btn-open-ig {
+flex: 2;
+padding: 15px;
+border-radius: 14px;
+border: none;
+background: linear-gradient(135deg, #E1306C, #F77737);
+color: #fff;
+font-size: 15px;
+font-weight: 700;
+cursor: pointer;
+font-family: inherit;
+}
+
+.btn-edit {
+flex: 1;
+padding: 15px;
+border-radius: 14px;
+border: 1px solid var(–border);
+background: rgba(255,255,255,0.07);
+color: var(–text);
+font-size: 15px;
+font-weight: 600;
+cursor: pointer;
+font-family: inherit;
+}
+
+.btn-delete-detail {
+width: 100%;
+margin-top: 8px;
+padding: 14px;
+border-radius: 14px;
+border: none;
+background: rgba(255,69,58,0.12);
+color: var(–red);
+font-size: 15px;
+font-weight: 600;
+cursor: pointer;
+font-family: inherit;
+}
+
+/* Toast */
+#toast {
+position: fixed;
+top: calc(var(–safe-top) + 8px);
+left: 50%;
+transform: translateX(-50%) translateY(-80px);
+background: rgba(50,50,50,0.95);
+color: #fff;
+padding: 10px 20px;
+border-radius: 20px;
+font-size: 14px;
+font-weight: 600;
+z-index: 999;
+transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+white-space: nowrap;
+pointer-events: none;
+}
+#toast.show { transform: translateX(-50%) translateY(0); }
+
+/* Animations */
+.account-card {
+animation: slideIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+@keyframes slideIn {
+from { opacity: 0; transform: translateY(20px) scale(0.95); }
+to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Clipboard pulse */
+.clipboard-pulse {
+animation: pulse 2s infinite;
+}
+@keyframes pulse {
+0%, 100% { box-shadow: 0 0 0 0 rgba(225,48,108,0.4); }
+50% { box-shadow: 0 0 0 8px rgba(225,48,108,0); }
+}
+</style>
+
+</head>
+<body>
+
+<div id="app">
+  <div id="header">
+    <div class="header-top">
+      <div class="app-title">📸 Prospect</div>
+      <button class="add-btn" onclick="openAddModal()" aria-label="Ajouter">
+        <svg viewBox="0 0 24 24"><path d="M19 11h-6V5h-2v6H5v2h6v6h2v-6h6z"/></svg>
+      </button>
+    </div>
+    <div class="tabs" id="tabs">
+      <button class="tab active" data-filter="all" onclick="setFilter('all')">
+        Tous <span class="tab-count" id="cnt-all">0</span>
+      </button>
+      <button class="tab" data-filter="prospect" onclick="setFilter('prospect')">
+        📋 À prospecter <span class="tab-count" id="cnt-prospect">0</span>
+      </button>
+      <button class="tab" data-filter="waiting" onclick="setFilter('waiting')">
+        ⏳ En attente <span class="tab-count" id="cnt-waiting">0</span>
+      </button>
+      <button class="tab" data-filter="done" onclick="setFilter('done')">
+        ✅ Prospectés <span class="tab-count" id="cnt-done">0</span>
+      </button>
+    </div>
+  </div>
+
+  <div id="list-container"></div>
+</div>
+
+<!-- Paste detection bar -->
+
+<div id="paste-bar" class="hidden">
+  <div class="paste-icon">📷</div>
+  <div class="paste-info">
+    <div class="paste-label">Instagram détecté</div>
+    <div class="paste-username" id="paste-username">@username</div>
+  </div>
+  <button class="paste-confirm" onclick="confirmPaste()">Ajouter</button>
+  <button class="paste-dismiss" onclick="dismissPaste()">✕</button>
+</div>
+
+<!-- Modal add/edit -->
+
+<div id="modal-overlay" onclick="closeModal(event)">
+  <div id="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="modal-title">Nouveau compte</div>
+
+```
+<div class="modal-field">
+  <div class="modal-label">Pseudo Instagram</div>
+  <input type="text" id="input-username" class="modal-input" placeholder="@username" autocomplete="off" autocorrect="off" autocapitalize="off">
+</div>
+
+<div class="modal-field">
+  <div class="modal-label">Lien</div>
+  <input type="text" id="input-url" class="modal-input" placeholder="https://instagram.com/..." autocomplete="off">
+</div>
+
+<div class="modal-field">
+  <div class="modal-label">Notes</div>
+  <textarea id="input-note" class="modal-input" placeholder="Ex: photographe, 10K abonnés..."></textarea>
+</div>
+
+<div class="modal-field">
+  <div class="modal-label">Statut</div>
+  <div class="status-grid">
+    <div class="status-opt prospect active" data-status="prospect" onclick="selectStatus('prospect')">
+      <span class="s-icon">📋</span>À prospecter
+    </div>
+    <div class="status-opt waiting" data-status="waiting" onclick="selectStatus('waiting')">
+      <span class="s-icon">⏳</span>En attente
+    </div>
+    <div class="status-opt done" data-status="done" onclick="selectStatus('done')">
+      <span class="s-icon">✅</span>Prospecté
+    </div>
+  </div>
+</div>
+
+<div class="modal-actions">
+  <button class="btn-cancel" onclick="closeModal()">Annuler</button>
+  <button class="btn-save" onclick="saveAccount()">Enregistrer</button>
+</div>
+```
+
+  </div>
+</div>
+
+<!-- Detail modal -->
+
+<div id="detail-overlay" onclick="closeDetail(event)" style="position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:100;display:flex;align-items:flex-end;transition:opacity 0.25s;opacity:0;pointer-events:none;">
+  <div id="detail-modal" style="background:rgba(28,28,30,0.98);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border-radius:24px 24px 0 0;border:1px solid var(--border);border-bottom:none;width:100%;padding:12px 20px calc(var(--safe-bottom) + 20px);transform:translateY(100%);transition:transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);">
+    <div class="modal-handle"></div>
+    <div class="detail-avatar" id="detail-avatar">A</div>
+    <div class="detail-username" id="detail-username">@username</div>
+    <a class="detail-link" id="detail-link" target="_blank">instagram.com/...</a>
+    <div class="modal-label" style="margin-bottom:6px">Notes</div>
+    <div class="detail-note-box" id="detail-note">Aucune note</div>
+    <div class="modal-label" style="margin-bottom:8px">Statut</div>
+    <div class="detail-status-row" id="detail-status-row"></div>
+    <div class="detail-row">
+      <button class="btn-edit" onclick="editFromDetail()">✏️ Modifier</button>
+      <button class="btn-open-ig" onclick="openInstagram()">Ouvrir Instagram</button>
+    </div>
+    <button class="btn-delete-detail" onclick="deleteFromDetail()">🗑 Supprimer ce compte</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ── STATE ──
+let accounts = JSON.parse(localStorage.getItem('ig_prospects') || '[]');
+let currentFilter = 'all';
+let modalStatus = 'prospect';
+let editingId = null;
+let detailId = null;
+let pendingPaste = null;
+let clipboardInterval = null;
+let lastClipboard = '';
+
+// ── UTILS ──
+function save() { localStorage.setItem('ig_prospects', JSON.stringify(accounts)); }
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
+
+function extractUsername(str) {
+  str = str.trim();
+  // URL instagram
+  const urlMatch = str.match(/instagram\.com\/([a-zA-Z0-9._]+)/);
+  if (urlMatch) return urlMatch[1];
+  // @username
+  const atMatch = str.match(/^@?([a-zA-Z0-9._]{2,30})$/);
+  if (atMatch) return atMatch[1];
+  return null;
+}
+
+function isInstagramLink(str) {
+  return /instagram\.com\//i.test(str);
+}
+
+function buildUrl(username) {
+  return `https://instagram.com/${username}`;
+}
+
+function getInitial(username) {
+  return (username || '?')[0].toUpperCase();
+}
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ── RENDER ──
+function getStatusLabel(s) {
+  return { prospect: '📋 À prospecter', waiting: '⏳ En attente', done: '✅ Prospecté' }[s] || s;
+}
+
+function updateCounts() {
+  const all = accounts.length;
+  const p = accounts.filter(a => a.status === 'prospect').length;
+  const w = accounts.filter(a => a.status === 'waiting').length;
+  const d = accounts.filter(a => a.status === 'done').length;
+  document.getElementById('cnt-all').textContent = all;
+  document.getElementById('cnt-prospect').textContent = p;
+  document.getElementById('cnt-waiting').textContent = w;
+  document.getElementById('cnt-done').textContent = d;
+}
+
+function renderList() {
+  updateCounts();
+  const container = document.getElementById('list-container');
+  const filtered = currentFilter === 'all' ? accounts : accounts.filter(a => a.status === currentFilter);
+
+  if (filtered.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">📸</div>
+        <div class="empty-title">${currentFilter === 'all' ? 'Aucun compte' : 'Aucun compte ici'}</div>
+        <div class="empty-sub">Copie un lien Instagram dans ton presse-papier ou appuie sur + pour en ajouter un.</div>
+      </div>`;
+    return;
+  }
+
+  container.innerHTML = filtered.map(acc => `
+    <div class="account-card" id="card-${acc.id}" data-id="${acc.id}">
+      <div class="swipe-actions">
+        <button class="swipe-btn delete" onclick="deleteAccount('${acc.id}')">
+          <span>🗑</span>Suppr.
+        </button>
+        <button class="swipe-btn open" onclick="window.open('${buildUrl(acc.username)}','_blank')">
+          <span>↗</span>Ouvrir
+        </button>
+      </div>
+      <div class="card-inner" onclick="openDetail('${acc.id}')">
+        <div class="avatar">
+          <div class="avatar-inner">${getInitial(acc.username)}</div>
+        </div>
+        <div class="card-info">
+          <div class="card-username">@${acc.username}</div>
+          ${acc.note ? `<div class="card-note">${acc.note}</div>` : '<div class="card-note" style="color:var(--text3)">Pas de note</div>'}
+        </div>
+        <div class="card-actions">
+          <span class="status-badge ${acc.status}">${getStatusLabel(acc.status).split(' ').slice(1).join(' ')}</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  // Swipe gesture
+  filtered.forEach(acc => setupSwipe(acc.id));
+}
+
+function setupSwipe(id) {
+  const card = document.getElementById(`card-${id}`);
+  if (!card) return;
+  const inner = card.querySelector('.card-inner');
+  let startX = 0, currentX = 0, swiping = false;
+  const THRESHOLD = 60;
+  const MAX = 140;
+
+  card.addEventListener('touchstart', e => {
+    startX = e.touches[0].clientX;
+    swiping = true;
+    inner.style.transition = 'none';
+  }, { passive: true });
+
+  card.addEventListener('touchmove', e => {
+    if (!swiping) return;
+    currentX = e.touches[0].clientX - startX;
+    if (currentX > 0) currentX = 0;
+    if (currentX < -MAX) currentX = -MAX;
+    inner.style.transform = `translateX(${currentX}px)`;
+  }, { passive: true });
+
+  card.addEventListener('touchend', () => {
+    swiping = false;
+    inner.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+    if (currentX < -THRESHOLD) {
+      inner.style.transform = `translateX(-140px)`;
+    } else {
+      inner.style.transform = 'translateX(0)';
+      currentX = 0;
+    }
+  });
+}
+
+// ── FILTER ──
+function setFilter(f) {
+  currentFilter = f;
+  document.querySelectorAll('.tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.filter === f);
+  });
+  renderList();
+}
+
+// ── ADD MODAL ──
+function openAddModal(prefill = null) {
+  editingId = null;
+  document.getElementById('modal-title').textContent = 'Nouveau compte';
+  document.getElementById('input-username').value = prefill ? '@' + prefill.username : '';
+  document.getElementById('input-url').value = prefill ? buildUrl(prefill.username) : '';
+  document.getElementById('input-note').value = '';
+  selectStatus('prospect');
+  showModal();
+}
+
+function openEditModal(id) {
+  const acc = accounts.find(a => a.id === id);
+  if (!acc) return;
+  editingId = id;
+  document.getElementById('modal-title').textContent = 'Modifier';
+  document.getElementById('input-username').value = '@' + acc.username;
+  document.getElementById('input-url').value = acc.url || buildUrl(acc.username);
+  document.getElementById('input-note').value = acc.note || '';
+  selectStatus(acc.status);
+  showModal();
+}
+
+function showModal() {
+  const overlay = document.getElementById('modal-overlay');
+  overlay.classList.add('visible');
+}
+
+function closeModal(e) {
+  if (e && e.target !== document.getElementById('modal-overlay')) return;
+  document.getElementById('modal-overlay').classList.remove('visible');
+  editingId = null;
+}
+
+function selectStatus(s) {
+  modalStatus = s;
+  document.querySelectorAll('.status-opt').forEach(el => {
+    el.classList.toggle('active', el.dataset.status === s);
+  });
+}
+
+function saveAccount() {
+  let raw = document.getElementById('input-username').value.trim();
+  const url = document.getElementById('input-url').value.trim();
+  const note = document.getElementById('input-note').value.trim();
+
+  // Extract username
+  let username = extractUsername(raw) || extractUsername(url);
+  if (!username) { toast('❌ Pseudo invalide'); return; }
+  username = username.replace('@','');
+
+  if (editingId) {
+    const idx = accounts.findIndex(a => a.id === editingId);
+    if (idx !== -1) {
+      accounts[idx] = { ...accounts[idx], username, url: url || buildUrl(username), note, status: modalStatus };
+      toast('✅ Compte mis à jour');
+    }
+  } else {
+    accounts.unshift({ id: uid(), username, url: url || buildUrl(username), note, status: modalStatus, addedAt: Date.now() });
+    toast('✅ Compte ajouté');
+  }
+
+  save();
+  renderList();
+  document.getElementById('modal-overlay').classList.remove('visible');
+  editingId = null;
+}
+
+// ── DELETE ──
+function deleteAccount(id) {
+  accounts = accounts.filter(a => a.id !== id);
+  save();
+  renderList();
+  toast('🗑 Compte supprimé');
+}
+
+// ── DETAIL ──
+function openDetail(id) {
+  detailId = id;
+  const acc = accounts.find(a => a.id === id);
+  if (!acc) return;
+
+  document.getElementById('detail-avatar').textContent = getInitial(acc.username);
+  document.getElementById('detail-username').textContent = '@' + acc.username;
+  const link = document.getElementById('detail-link');
+  link.textContent = `instagram.com/${acc.username}`;
+  link.href = acc.url || buildUrl(acc.username);
+  document.getElementById('detail-note').textContent = acc.note || 'Aucune note';
+
+  // Status buttons
+  const row = document.getElementById('detail-status-row');
+  row.innerHTML = ['prospect','waiting','done'].map(s => `
+    <button class="detail-status-btn ${s} ${acc.status === s ? 'active' : ''}" onclick="setDetailStatus('${s}')">
+      <span class="s-icon">${s==='prospect'?'📋':s==='waiting'?'⏳':'✅'}</span>
+      ${s==='prospect'?'À prospecter':s==='waiting'?'En attente':'Prospecté'}
+    </button>
+  `).join('');
+
+  const overlay = document.getElementById('detail-overlay');
+  const modal = document.getElementById('detail-modal');
+  overlay.style.opacity = '1';
+  overlay.style.pointerEvents = 'all';
+  modal.style.transform = 'translateY(0)';
+}
+
+function closeDetail(e) {
+  if (e && e.target !== document.getElementById('detail-overlay')) return;
+  const overlay = document.getElementById('detail-overlay');
+  const modal = document.getElementById('detail-modal');
+  overlay.style.opacity = '0';
+  overlay.style.pointerEvents = 'none';
+  modal.style.transform = 'translateY(100%)';
+  detailId = null;
+}
+
+function setDetailStatus(s) {
+  if (!detailId) return;
+  const idx = accounts.findIndex(a => a.id === detailId);
+  if (idx !== -1) { accounts[idx].status = s; save(); }
+  document.querySelectorAll('.detail-status-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.classList.contains(s));
+  });
+  renderList();
+  toast(s==='prospect'?'📋 À prospecter':s==='waiting'?'⏳ En attente':'✅ Prospecté');
+}
+
+function editFromDetail() {
+  closeDetail({ target: document.getElementById('detail-overlay') });
+  setTimeout(() => openEditModal(detailId), 300);
+}
+
+function openInstagram() {
+  const acc = accounts.find(a => a.id === detailId);
+  if (acc) window.open(acc.url || buildUrl(acc.username), '_blank');
+}
+
+function deleteFromDetail() {
+  if (!detailId) return;
+  const id = detailId;
+  closeDetail({ target: document.getElementById('detail-overlay') });
+  setTimeout(() => { deleteAccount(id); }, 300);
+}
+
+// ── CLIPBOARD DETECTION ──
+function startClipboardWatch() {
+  // Check on visibility change (app focus)
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) checkClipboard();
+  });
+
+  // Also on focus
+  window.addEventListener('focus', checkClipboard);
+
+  // Check immediately
+  setTimeout(checkClipboard, 500);
+}
+
+async function checkClipboard() {
+  try {
+    if (!navigator.clipboard || !navigator.clipboard.readText) return;
+    const text = await navigator.clipboard.readText();
+    if (!text || text === lastClipboard) return;
+    lastClipboard = text;
+
+    if (isInstagramLink(text)) {
+      const username = extractUsername(text);
+      if (username && !accounts.find(a => a.username === username)) {
+        showPasteBar(username, text);
+      }
+    }
+  } catch(e) {
+    // Permission refusée — silencieux
+  }
+}
+
+function showPasteBar(username, rawUrl) {
+  pendingPaste = { username, url: rawUrl };
+  document.getElementById('paste-username').textContent = '@' + username;
+  const bar = document.getElementById('paste-bar');
+  bar.classList.remove('hidden');
+  bar.classList.add('clipboard-pulse');
+}
+
+function confirmPaste() {
+  if (!pendingPaste) return;
+  accounts.unshift({
+    id: uid(),
+    username: pendingPaste.username,
+    url: pendingPaste.url,
+    note: '',
+    status: 'prospect',
+    addedAt: Date.now()
+  });
+  save();
+  renderList();
+  dismissPaste();
+  toast('✅ @' + pendingPaste?.username + ' ajouté !');
+  lastClipboard = '';
+}
+
+function dismissPaste() {
+  const bar = document.getElementById('paste-bar');
+  bar.classList.add('hidden');
+  bar.classList.remove('clipboard-pulse');
+  pendingPaste = null;
+}
+
+// ── INIT ──
+renderList();
+startClipboardWatch();
+</script>
+
+</body>
+</html>
