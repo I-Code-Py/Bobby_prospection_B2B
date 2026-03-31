@@ -10,600 +10,545 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-/* ── RESET ── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{height:100%;background:#0a0a0a}
 body{
   -webkit-tap-highlight-color:transparent;
   overscroll-behavior:none;
-  background:#0a0a0a;
-  color:#f0f0f0;
+  background:#0a0a0a;color:#f0f0f0;
   font-family:'DM Mono',monospace;
-  height:100%;
-  overflow:hidden;
+  height:100%;overflow:hidden;
   padding-top:env(safe-area-inset-top);
   padding-bottom:env(safe-area-inset-bottom);
   position:fixed;width:100%;
 }
-html{height:100%;background:#0a0a0a}
 button{font-family:'DM Mono',monospace;cursor:pointer;border:none;background:none;color:inherit;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
-input,textarea{font-family:'DM Mono',monospace;font-size:16px;color:#f0f0f0;-webkit-tap-highlight-color:transparent}
+input,textarea{font-family:'DM Mono',monospace;font-size:16px;color:#f0f0f0;-webkit-tap-highlight-color:transparent;background:none;border:none;outline:none}
 
-/* ── VARS ── */
 :root{
-  --bg:#0a0a0a;
-  --surface:#141414;
-  --surface2:#1c1c1c;
-  --border:#2a2a2a;
-  --accent:#e8ff47;
-  --accent2:#ff6b35;
-  --service:#22c55e;
-  --text:#f0f0f0;
-  --muted:#555;
-  --danger:#ff4455;
+  --bg:#0a0a0a;--surface:#141414;--surface2:#1c1c1c;--border:#2a2a2a;
+  --accent:#e8ff47;--accent2:#ff6b35;--service:#22c55e;
+  --text:#f0f0f0;--muted:#555;--danger:#ff4455;
 }
 
 /* ── SLIDE ROOT ── */
 #slide-root{
-  display:flex;
-  width:200%;
-  height:100%;
-  transition:transform .3s cubic-bezier(.4,0,.2,1);
+  display:flex;width:200%;height:100%;
+  transition:transform .32s cubic-bezier(.4,0,.2,1);
   will-change:transform;
 }
-.panel{
-  width:50%;
-  height:100%;
-  display:flex;
-  flex-direction:column;
-  overflow:hidden;
-}
+/* Panel 0 = ADD (left), Panel 1 = LIST (right) */
+#slide-root.show-list{transform:translateX(-50%)}
+.panel{width:50%;height:100%;display:flex;flex-direction:column;overflow:hidden;position:relative}
 
 /* ── HEADER ── */
 header{
-  flex-shrink:0;
-  display:flex;
-  align-items:center;
-  padding:14px 16px 12px;
-  border-bottom:1px solid var(--border);
-  gap:10px;
-  position:relative;
+  flex-shrink:0;display:flex;align-items:center;
+  padding:12px 16px 10px;border-bottom:1px solid var(--border);
+  gap:10px;position:relative;min-height:56px;
 }
-.logo-wrap{flex:1;min-width:0}
+.logo-wrap{flex:1;min-width:0;overflow:hidden}
 .logo-title{
-  font-family:'Syne',sans-serif;
-  font-weight:800;
-  font-size:20px;
-  color:var(--accent);
-  line-height:1.1;
-  white-space:nowrap;
+  font-family:'Syne',sans-serif;font-weight:800;font-size:19px;
+  color:var(--accent);line-height:1.1;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 .logo-title span{color:#b8b8b8}
 .logo-sub{
-  font-family:'DM Mono',monospace;
-  font-size:8.5px;
-  color:rgba(255,255,255,.5);
-  text-transform:uppercase;
-  letter-spacing:.1em;
-  margin-top:2px;
+  font-size:8px;color:rgba(255,255,255,.4);
+  text-transform:uppercase;letter-spacing:.1em;margin-top:1px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
-.hbtns{display:flex;gap:8px;flex-shrink:0}
+.hbtns{display:flex;gap:7px;flex-shrink:0}
 .hbtn{
-  width:36px;height:36px;
-  border-radius:9px;
-  border:1px solid var(--border);
-  background:var(--surface2);
+  width:34px;height:34px;border-radius:9px;
+  border:1px solid var(--border);background:var(--surface2);
   display:flex;align-items:center;justify-content:center;
-  font-size:16px;
-  transition:transform .1s,border-color .15s;
-  touch-action:manipulation;
+  font-size:15px;transition:transform .1s,border-color .15s;
+  touch-action:manipulation;flex-shrink:0;
 }
 .hbtn:active{transform:scale(.88)}
 .hbtn.on{border-color:var(--accent);color:var(--accent)}
 .back-btn{
-  width:36px;height:36px;
-  border-radius:9px;
-  border:1px solid var(--border);
-  background:var(--surface2);
+  width:34px;height:34px;border-radius:9px;
+  border:1px solid var(--border);background:var(--surface2);
   display:flex;align-items:center;justify-content:center;
-  font-size:18px;
-  touch-action:manipulation;
-  transition:transform .1s;
+  font-size:19px;touch-action:manipulation;transition:transform .1s;flex-shrink:0;
 }
 .back-btn:active{transform:scale(.88)}
 
-/* Panel dots */
+/* Dots */
 .panel-dots{
-  position:absolute;
-  bottom:-11px;left:50%;
-  transform:translateX(-50%);
-  display:flex;gap:6px;
-  z-index:5;
+  position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);
+  display:flex;gap:6px;z-index:5;
 }
-.dot{
-  width:5px;height:5px;border-radius:50%;
-  background:var(--muted);
-  transition:background .2s,transform .2s;
-}
+.dot{width:5px;height:5px;border-radius:50%;background:var(--muted);transition:background .2s,transform .2s}
 .dot.on{background:var(--accent);transform:scale(1.35)}
+
+/* ── EDIT BANNER ── */
+.edit-banner{
+  flex-shrink:0;display:none;
+  align-items:center;justify-content:space-between;
+  padding:8px 16px;
+  background:rgba(255,107,53,.06);
+  border-bottom:1px solid rgba(255,107,53,.12);
+}
+.edit-banner.on{display:flex}
+.eb-text{font-size:11px;color:var(--accent2)}
+.eb-done{
+  padding:5px 12px;border-radius:9px;background:var(--accent2);
+  color:#000;font-family:'Syne',sans-serif;font-weight:800;font-size:11px;
+  touch-action:manipulation;transition:transform .1s;
+}
+.eb-done:active{transform:scale(.92)}
 
 /* ── SEARCH BAR ── */
 .search-bar{
-  flex-shrink:0;
-  padding:10px 16px;
-  border-bottom:1px solid var(--border);
-  display:none;
+  flex-shrink:0;padding:8px 16px;
+  border-bottom:1px solid var(--border);display:none;
 }
 .search-bar.open{display:block}
 .search-input{
-  width:100%;
-  padding:10px 14px;
-  background:var(--surface2);
-  border:1px solid var(--border);
-  border-radius:12px;
-  color:#f0f0f0;
-  font-size:16px;
-  outline:none;
-  transition:border-color .2s;
+  width:100%;padding:9px 13px;
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:12px;color:#f0f0f0;font-size:16px;
+  outline:none;transition:border-color .2s;-webkit-appearance:none;
 }
 .search-input:focus{border-color:var(--accent)}
 .search-input::placeholder{color:var(--muted)}
 
 /* ── PANEL MAIN ── */
 .panel-main{
-  flex:1;
-  overflow-y:auto;
-  -webkit-overflow-scrolling:touch;
-  padding:12px 16px;
+  flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  padding:14px 16px;
 }
 .panel-main::-webkit-scrollbar{display:none}
 
-/* ── SECTION ── */
+/* ── SECTION LABEL ── */
 .section-label{
-  font-family:'Syne',sans-serif;
-  font-weight:800;
-  font-size:10px;
-  color:var(--muted);
-  text-transform:uppercase;
-  letter-spacing:.12em;
-  padding:14px 0 7px;
+  font-family:'Syne',sans-serif;font-weight:800;font-size:10px;
+  color:var(--muted);text-transform:uppercase;letter-spacing:.12em;
+  padding:12px 0 6px;
 }
 
-/* ── ACCOUNT CARD ── */
+/* ── ACCOUNT CARD (list) ── */
 .acc-card{
-  width:100%;
-  min-height:80px;
-  padding:16px 18px;
-  border-radius:18px;
-  border:1px solid var(--border);
-  background:var(--surface);
-  display:flex;align-items:center;gap:13px;
-  margin-bottom:8px;
-  position:relative;
-  overflow:hidden;
-  text-align:left;
-  transition:transform .1s;
-  touch-action:manipulation;
+  width:100%;min-height:72px;padding:14px 16px;
+  border-radius:18px;border:1px solid var(--border);background:var(--surface);
+  display:flex;align-items:center;gap:12px;
+  margin-bottom:7px;position:relative;overflow:hidden;
+  text-align:left;transition:transform .1s;touch-action:manipulation;
 }
 .acc-card:active{transform:scale(.97)}
-
-/* Confirm flash */
-.acc-card::after{
-  content:attr(data-confirm);
-  position:absolute;inset:0;
-  background:var(--accent);
-  color:#000;
-  font-family:'Syne',sans-serif;
-  font-weight:800;
-  font-size:15px;
-  display:flex;align-items:center;justify-content:center;
-  border-radius:18px;
-  opacity:0;
-  pointer-events:none;
-}
-.acc-card.flash::after{
-  animation:cfade .9s ease forwards;
-  animation-delay:.5s;
-}
-@keyframes cfade{0%{opacity:1}100%{opacity:0}}
-/* flash trigger */
-.acc-card.flash-start::after{opacity:1;animation:none}
-
 .card-av{
-  width:44px;height:44px;border-radius:50%;
-  background:var(--surface2);
-  border:1.5px solid var(--border);
+  width:40px;height:40px;border-radius:50%;
+  background:var(--surface2);border:1.5px solid var(--border);
   display:flex;align-items:center;justify-content:center;
-  font-size:16px;font-weight:800;
-  font-family:'Syne',sans-serif;
-  color:var(--accent);
+  font-family:'Syne',sans-serif;font-weight:800;font-size:15px;color:var(--accent);
   flex-shrink:0;
 }
 .card-body{flex:1;min-width:0}
 .card-name{
-  font-family:'Syne',sans-serif;
-  font-weight:700;
-  font-size:15px;
-  color:var(--text);
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  font-family:'Syne',sans-serif;font-weight:700;font-size:14px;
+  color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 .card-preview{
-  font-size:10px;
-  color:var(--muted);
-  margin-top:3px;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-  display:flex;align-items:center;gap:6px;
+  font-size:10px;color:var(--muted);margin-top:3px;
+  display:flex;align-items:center;gap:5px;flex-wrap:nowrap;overflow:hidden;
 }
-.card-arrow{
-  color:rgba(255,255,255,.2);
-  font-size:18px;
-  flex-shrink:0;
+.card-arrow{color:rgba(255,255,255,.2);font-size:16px;flex-shrink:0}
+.pill{
+  font-size:9px;font-weight:500;padding:2px 7px;
+  border-radius:6px;white-space:nowrap;flex-shrink:0;
 }
-.pill-b2b{
-  background:rgba(34,197,94,.12);
-  color:var(--service);
-  font-size:9px;font-weight:500;
-  padding:2px 7px;border-radius:6px;
-  white-space:nowrap;
-}
-.pill-status{
-  font-size:9px;font-weight:500;
-  padding:2px 7px;border-radius:6px;
-  white-space:nowrap;
-}
+.pill-b2b{background:rgba(34,197,94,.12);color:var(--service)}
 .pill-prospect{background:rgba(232,255,71,.08);color:var(--accent)}
 .pill-active{background:rgba(255,107,53,.1);color:var(--accent2)}
 .pill-done{background:rgba(34,197,94,.1);color:var(--service)}
 
-/* Edit overlay */
+/* Edit overlay — activated by edit mode button click, NOT card click */
 .edit-overlay{
-  position:absolute;inset:0;
-  background:rgba(6,6,6,.88);
-  border-radius:18px;
-  display:flex;align-items:center;justify-content:center;gap:10px;
-  opacity:0;pointer-events:none;
-  transition:opacity .15s;
+  position:absolute;inset:0;background:rgba(6,6,6,.9);
+  border-radius:18px;display:flex;align-items:center;justify-content:center;gap:10px;
+  opacity:0;pointer-events:none;transition:opacity .15s;
 }
 .edit-overlay.on{opacity:1;pointer-events:all}
 .eo-btn{
-  padding:8px 16px;
-  border-radius:12px;
-  font-size:12px;font-weight:500;
-  border:1px solid var(--border);
-  background:var(--surface2);
-  transition:transform .1s;
-  touch-action:manipulation;
+  padding:8px 14px;border-radius:12px;font-size:12px;font-weight:500;
+  border:1px solid var(--border);background:var(--surface2);
+  transition:transform .1s;touch-action:manipulation;
 }
 .eo-btn:active{transform:scale(.9)}
 .eo-edit{color:var(--accent);border-color:rgba(232,255,71,.25)}
 .eo-del{color:var(--danger);border-color:rgba(255,68,85,.25)}
 
-/* ── EDIT BANNER ── */
-.edit-banner{
-  flex-shrink:0;
-  display:none;
-  align-items:center;justify-content:space-between;
-  padding:10px 16px;
-  background:rgba(255,107,53,.07);
-  border-bottom:1px solid rgba(255,107,53,.15);
-}
-.edit-banner.on{display:flex}
-.eb-text{font-size:11px;color:var(--accent2)}
-.eb-done{
-  padding:6px 14px;
-  border-radius:9px;
-  background:var(--accent2);
-  color:#000;
-  font-family:'Syne',sans-serif;
-  font-weight:800;
-  font-size:12px;
-  touch-action:manipulation;
-  transition:transform .1s;
-}
-.eb-done:active{transform:scale(.92)}
-
-/* ── EMPTY STATE ── */
+/* ── EMPTY ── */
 .empty{
   display:flex;flex-direction:column;align-items:center;
-  padding:60px 30px;gap:10px;text-align:center;
+  padding:60px 30px;gap:8px;text-align:center;
 }
-.em-ic{font-size:40px;opacity:.2}
-.em-t{font-family:'Syne',sans-serif;font-weight:800;font-size:15px;color:rgba(255,255,255,.3)}
-.em-s{font-size:12px;color:var(--muted);line-height:1.6}
+.em-ic{font-size:36px;opacity:.15;margin-bottom:4px}
+.em-t{font-family:'Syne',sans-serif;font-weight:800;font-size:14px;color:rgba(255,255,255,.25)}
+.em-s{font-size:11px;color:var(--muted);line-height:1.6}
 
 /* ── ADD PANEL ── */
-#p-add .panel-main{padding:16px}
-.add-section-title{
-  font-family:'Syne',sans-serif;font-weight:800;font-size:13px;
-  color:rgba(255,255,255,.6);margin-bottom:12px;
-}
+#p-add .panel-main{padding:14px 16px}
 
-/* Big tap zone */
-.tap-zone{
-  border:1.5px dashed rgba(232,255,71,.2);
-  border-radius:18px;
-  background:rgba(232,255,71,.03);
-  padding:28px 20px;
-  display:flex;flex-direction:column;align-items:center;
-  text-align:center;gap:8px;
-  margin-bottom:16px;
-  cursor:pointer;
-  transition:all .18s;
-  touch-action:manipulation;
-}
-.tap-zone:active{transform:scale(.98);background:rgba(232,255,71,.06)}
-.tap-zone.ready{border-color:rgba(232,255,71,.5);background:rgba(232,255,71,.05)}
-.tz-ic{font-size:36px;line-height:1}
-.tz-t{font-family:'Syne',sans-serif;font-weight:800;font-size:15px;color:var(--text)}
-.tz-s{font-size:11px;color:var(--muted);line-height:1.55;max-width:220px}
-
-/* Preview card */
-.preview-card{
-  background:var(--surface);
+/* Clip preview bar — shows at top when IG link detected */
+.clip-bar{
+  display:none;
+  background:rgba(232,255,71,.06);
   border:1px solid rgba(232,255,71,.2);
-  border-radius:18px;
-  padding:14px 16px;
-  display:flex;align-items:center;gap:12px;
+  border-radius:14px;padding:12px 14px;
   margin-bottom:12px;
-  animation:rise .22s cubic-bezier(.34,1.4,.64,1) both;
+  flex-direction:row;align-items:center;gap:10px;
+  animation:fadeIn .2s ease both;
 }
-@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
-.prev-av{
-  width:44px;height:44px;border-radius:50%;
-  background:var(--surface2);
-  border:1.5px solid var(--accent);
+.clip-bar.show{display:flex}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.clip-bar-av{
+  width:36px;height:36px;border-radius:50%;
+  background:var(--surface2);border:1.5px solid var(--accent);
   display:flex;align-items:center;justify-content:center;
-  font-family:'Syne',sans-serif;font-weight:800;font-size:16px;color:var(--accent);
+  font-family:'Syne',sans-serif;font-weight:800;font-size:13px;color:var(--accent);
   flex-shrink:0;
 }
-.prev-info{flex:1;min-width:0}
-.prev-name{font-family:'Syne',sans-serif;font-weight:800;font-size:14px;color:var(--text)}
-.prev-url{font-size:10px;color:var(--muted);margin-top:2px}
-.prev-ok{font-size:18px;flex-shrink:0}
+.clip-bar-info{flex:1;min-width:0}
+.clip-bar-name{font-family:'Syne',sans-serif;font-weight:800;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.clip-bar-url{font-size:10px;color:var(--muted);margin-top:1px}
+.clip-bar-dismiss{font-size:16px;color:var(--muted);padding:4px;touch-action:manipulation;flex-shrink:0}
+.clip-bar-dismiss:active{opacity:.5}
 
-/* Fields */
+/* Form fields */
 .field{margin-bottom:10px}
-.field-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px}
+.field-label{
+  font-size:10px;color:var(--muted);text-transform:uppercase;
+  letter-spacing:.08em;margin-bottom:5px;display:block;
+}
 .field-input{
-  width:100%;padding:12px 14px;
-  background:var(--surface2);
-  border:1px solid var(--border);
-  border-radius:12px;
-  color:#f0f0f0;font-size:16px;
-  outline:none;
-  transition:border-color .2s;
-  -webkit-appearance:none;
+  width:100%;padding:11px 13px;
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:12px;color:#f0f0f0;font-size:16px;
+  outline:none;transition:border-color .2s;-webkit-appearance:none;
+  display:block;
 }
 .field-input:focus{border-color:var(--accent)}
 .field-input::placeholder{color:var(--muted)}
-textarea.field-input{resize:none;min-height:70px;line-height:1.5}
+textarea.field-input{resize:none;min-height:60px;line-height:1.5}
 
-/* B2B toggle row */
 .b2b-row{
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:12px;
-  padding:12px 14px;
-  margin-bottom:10px;
-  display:flex;align-items:center;justify-content:space-between;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:12px;padding:12px 14px;margin-bottom:10px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
 }
-.b2b-info{}
+.b2b-info{flex:1;min-width:0}
 .b2b-label{font-family:'Syne',sans-serif;font-weight:800;font-size:13px}
 .b2b-sub{font-size:10px;color:var(--muted);margin-top:2px}
 .tog{
-  width:48px;height:28px;border-radius:14px;
+  width:46px;height:26px;border-radius:13px;
   background:var(--surface2);border:1px solid var(--border);
-  position:relative;cursor:pointer;transition:background .2s,border-color .2s;
-  flex-shrink:0;touch-action:manipulation;
+  position:relative;cursor:pointer;transition:background .2s,border-color .2s;flex-shrink:0;
+  touch-action:manipulation;
 }
 .tog.on{background:var(--accent);border-color:var(--accent)}
 .tok{
-  position:absolute;top:3px;left:3px;
+  position:absolute;top:2px;left:2px;
   width:22px;height:22px;border-radius:50%;
-  background:#888;
+  background:#666;
   transition:transform .22s cubic-bezier(.34,1.5,.64,1),background .2s;
   box-shadow:0 1px 4px rgba(0,0,0,.4);
 }
 .tog.on .tok{transform:translateX(20px);background:#000}
 
-/* Main add button */
 .btn-main{
-  width:100%;padding:16px;
-  border-radius:18px;
-  background:var(--accent);
-  color:#000;
-  font-family:'Syne',sans-serif;font-weight:800;font-size:16px;
+  width:100%;padding:15px;border-radius:18px;
+  background:var(--accent);color:#000;
+  font-family:'Syne',sans-serif;font-weight:800;font-size:15px;
   border:none;cursor:pointer;
-  transition:opacity .15s,transform .1s;
-  touch-action:manipulation;margin-top:4px;
+  transition:opacity .15s,transform .1s;touch-action:manipulation;
 }
 .btn-main:active{opacity:.85;transform:scale(.98)}
-.btn-main:disabled{opacity:.2;pointer-events:none}
+.btn-main:disabled{opacity:.18;pointer-events:none}
 
-/* ── DETAIL PANEL ── */
-#p-detail .panel-main{padding:0}
+.btn-secondary{
+  width:100%;padding:13px;border-radius:18px;
+  background:var(--surface);border:1px solid var(--border);
+  color:rgba(255,255,255,.6);
+  font-family:'Syne',sans-serif;font-weight:800;font-size:14px;
+  cursor:pointer;margin-top:8px;
+  transition:opacity .15s,transform .1s,border-color .15s;touch-action:manipulation;
+}
+.btn-secondary:active{opacity:.8;transform:scale(.98)}
+.btn-secondary:disabled{opacity:.15;pointer-events:none}
+.btn-secondary.ready{border-color:rgba(232,255,71,.3);color:var(--accent)}
+
+/* ── FOOTER ── */
+footer{
+  flex-shrink:0;padding:8px 16px;
+  border-top:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  cursor:pointer;touch-action:manipulation;
+}
+.footer-text{font-size:9px;color:rgba(255,255,255,.28);line-height:1.4}
+.footer-brand{font-size:8px;color:rgba(255,255,255,.18);letter-spacing:.05em}
+.footer-hint{font-size:9px;color:rgba(255,255,255,.2)}
+
+/* ── DETAIL OVERLAY ── */
+#detail-overlay{
+  position:fixed;inset:0;z-index:40;
+  background:#0a0a0a;
+  transform:translateX(100%);
+  transition:transform .32s cubic-bezier(.4,0,.2,1);
+  display:flex;flex-direction:column;
+  padding-top:env(safe-area-inset-top);
+  padding-bottom:env(safe-area-inset-bottom);
+  will-change:transform;
+}
+#detail-overlay.open{transform:translateX(0)}
+
+/* Active status bar — fixed inside detail, no layout shift */
+.active-indicator{
+  position:absolute;bottom:56px;left:16px;right:16px;
+  background:rgba(255,107,53,.1);
+  border:1px solid rgba(255,107,53,.2);
+  border-radius:12px;padding:8px 13px;
+  display:none;align-items:center;gap:8px;
+  font-size:11px;color:var(--accent2);
+  z-index:5;pointer-events:none;
+}
+.active-indicator.show{display:flex}
+.active-pulse{width:6px;height:6px;border-radius:50%;background:var(--accent2);animation:blink 1.5s infinite;flex-shrink:0}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+
+.detail-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;position:relative}
+.detail-scroll::-webkit-scrollbar{display:none}
+
 .detail-hero{
-  padding:24px 20px 16px;
-  display:flex;align-items:center;gap:14px;
+  padding:20px 18px 14px;
+  display:flex;align-items:center;gap:13px;
   border-bottom:1px solid var(--border);
 }
 .detail-av{
-  width:58px;height:58px;border-radius:50%;
-  background:var(--surface2);
-  border:2px solid var(--accent);
+  width:54px;height:54px;border-radius:50%;
+  background:var(--surface2);border:2px solid var(--accent);
   display:flex;align-items:center;justify-content:center;
-  font-family:'Syne',sans-serif;font-weight:800;font-size:22px;color:var(--accent);
+  font-family:'Syne',sans-serif;font-weight:800;font-size:20px;color:var(--accent);
   flex-shrink:0;
 }
 .detail-info{flex:1;min-width:0}
-.detail-name{font-family:'Syne',sans-serif;font-weight:800;font-size:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.detail-url{font-size:11px;color:var(--muted);margin-top:3px}
-.detail-pills{display:flex;gap:5px;margin-top:6px;flex-wrap:wrap}
-
-.detail-section{padding:16px 20px;border-bottom:1px solid var(--border)}
-.detail-section-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
-
-/* Status buttons */
-.status-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
-.status-btn{
-  padding:12px 6px;border-radius:12px;
-  border:1px solid var(--border);
-  background:var(--surface2);
-  font-family:'DM Mono',monospace;
-  font-size:11px;color:var(--muted);
-  display:flex;flex-direction:column;align-items:center;gap:5px;
-  transition:all .15s;touch-action:manipulation;
+.detail-name{
+  font-family:'Syne',sans-serif;font-weight:800;font-size:17px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
-.status-btn .sb-ic{font-size:18px}
+.detail-url{font-size:10px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.detail-pills{display:flex;gap:5px;margin-top:6px;flex-wrap:wrap}
+.detail-ig-btn{
+  padding:8px 13px;border-radius:10px;
+  border:1px solid rgba(225,48,108,.25);
+  background:rgba(225,48,108,.08);
+  color:#e1306c;font-family:'Syne',sans-serif;font-weight:800;font-size:12px;
+  flex-shrink:0;touch-action:manipulation;transition:transform .1s;
+}
+.detail-ig-btn:active{transform:scale(.92)}
+
+.detail-section{padding:14px 18px;border-bottom:1px solid var(--border)}
+.detail-section-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:9px}
+
+/* Status grid */
+.status-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px}
+.status-btn{
+  padding:11px 4px;border-radius:12px;
+  border:1px solid var(--border);background:var(--surface2);
+  font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  transition:all .15s;touch-action:manipulation;text-align:center;
+  line-height:1.3;
+}
+.status-btn .sb-ic{font-size:16px}
 .status-btn:active{transform:scale(.94)}
 .status-btn.on-prospect{border-color:rgba(232,255,71,.4);background:rgba(232,255,71,.06);color:var(--accent)}
 .status-btn.on-active{border-color:rgba(255,107,53,.4);background:rgba(255,107,53,.06);color:var(--accent2)}
 .status-btn.on-done{border-color:rgba(34,197,94,.4);background:rgba(34,197,94,.06);color:var(--service)}
 
-/* Note display */
+/* Note box */
 .note-box{
-  background:var(--surface2);
-  border:1px solid var(--border);
-  border-radius:12px;
-  padding:12px 14px;
-  font-size:13px;color:rgba(255,255,255,.7);
-  line-height:1.6;min-height:50px;
-  cursor:pointer;transition:border-color .2s;
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:12px;padding:12px 13px;
+  font-size:13px;color:rgba(255,255,255,.65);line-height:1.6;
+  min-height:44px;cursor:pointer;transition:border-color .2s;
 }
 .note-box:active{border-color:var(--accent)}
-.note-box.empty-note{color:var(--muted);font-style:italic}
+.note-empty{color:var(--muted);font-style:italic}
 
-/* Action buttons */
-.action-row{display:flex;gap:8px;padding:16px 20px}
+/* Meta row */
+.meta-row{display:flex;gap:8px;padding:12px 18px;border-bottom:1px solid var(--border)}
+.meta-item{flex:1;background:var(--surface);border-radius:10px;padding:9px 10px}
+.meta-label{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.meta-value{font-family:'Syne',sans-serif;font-weight:800;font-size:13px;margin-top:3px;color:var(--text)}
+
+.action-row{display:flex;gap:8px;padding:14px 18px}
 .action-btn{
-  flex:1;padding:14px;border-radius:12px;
+  flex:1;padding:13px 8px;border-radius:12px;
   border:1px solid var(--border);
-  font-family:'Syne',sans-serif;font-weight:800;font-size:13px;
-  transition:transform .1s;touch-action:manipulation;
+  font-family:'Syne',sans-serif;font-weight:800;font-size:12px;
+  transition:transform .1s;touch-action:manipulation;text-align:center;
 }
 .action-btn:active{transform:scale(.95)}
-.ab-ig{background:rgba(225,48,108,.1);color:#e1306c;border-color:rgba(225,48,108,.2)}
-.ab-del{background:rgba(255,68,85,.07);color:var(--danger);border-color:rgba(255,68,85,.15)}
-
-/* Active badge */
-.active-bar{
-  background:rgba(255,107,53,.06);
-  border-bottom:1px solid rgba(255,107,53,.12);
-  padding:10px 20px;
-  display:flex;align-items:center;gap:8px;
-  font-size:11px;color:var(--accent2);
-}
-.active-pulse{width:7px;height:7px;border-radius:50%;background:var(--accent2);animation:blink 1.6s infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+.ab-del{background:rgba(255,68,85,.06);color:var(--danger);border-color:rgba(255,68,85,.15)}
+.ab-edit{background:var(--surface);color:rgba(255,255,255,.6)}
 
 /* ── MODAL ── */
 .modal-bg{
   position:fixed;inset:0;
-  background:rgba(0,0,0,.45);
-  backdrop-filter:blur(20px) saturate(1.8);
-  -webkit-backdrop-filter:blur(20px) saturate(1.8);
-  z-index:80;
-  opacity:0;pointer-events:none;
-  transition:opacity .22s;
+  background:rgba(0,0,0,.5);
+  backdrop-filter:blur(18px) saturate(1.8);
+  -webkit-backdrop-filter:blur(18px) saturate(1.8);
+  z-index:80;opacity:0;pointer-events:none;transition:opacity .22s;
 }
 .modal-bg.on{opacity:1;pointer-events:all}
 .modal{
   position:fixed;bottom:0;left:0;right:0;
-  background:rgba(20,20,20,.82);
+  background:rgba(18,18,18,.95);
   backdrop-filter:blur(24px) saturate(2);
   -webkit-backdrop-filter:blur(24px) saturate(2);
-  border-radius:26px 26px 0 0;
-  border-top:1px solid rgba(255,255,255,.1);
-  padding:0 20px calc(env(safe-area-inset-bottom) + 20px);
-  z-index:81;
-  transform:translateY(100%);
+  border-radius:24px 24px 0 0;
+  border-top:1px solid rgba(255,255,255,.08);
+  padding:0 18px calc(env(safe-area-inset-bottom) + 18px);
+  z-index:81;transform:translateY(100%);
   transition:transform .28s cubic-bezier(.33,1,.68,1);
   max-height:85vh;overflow-y:auto;
 }
 .modal-bg.on .modal{transform:none}
-.modal-handle{width:36px;height:4px;background:rgba(255,255,255,.12);border-radius:2px;margin:10px auto 16px}
-.modal-title{font-family:'Syne',sans-serif;font-weight:800;font-size:18px;margin-bottom:16px;color:var(--text)}
-.modal-field{margin-bottom:12px}
-.modal-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px}
+.modal-handle{width:36px;height:4px;background:rgba(255,255,255,.1);border-radius:2px;margin:10px auto 14px}
+.modal-title{
+  font-family:'Syne',sans-serif;font-weight:800;font-size:17px;
+  margin-bottom:14px;color:var(--text);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.modal-field{margin-bottom:10px}
+.modal-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px;display:block}
 .modal-input{
-  width:100%;padding:12px 14px;
-  background:var(--surface2);
-  border:1px solid var(--border);
-  border-radius:12px;
-  color:#f0f0f0;font-size:16px;
-  outline:none;-webkit-appearance:none;
-  transition:border-color .2s;
+  width:100%;padding:11px 13px;
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:12px;color:#f0f0f0;font-size:16px;
+  outline:none;-webkit-appearance:none;transition:border-color .2s;display:block;
 }
 .modal-input:focus{border-color:var(--accent)}
 .modal-input::placeholder{color:var(--muted)}
-textarea.modal-input{resize:none;min-height:80px;line-height:1.5}
-.modal-actions{display:flex;gap:10px;margin-top:16px}
+textarea.modal-input{resize:none;min-height:70px;line-height:1.5}
+.modal-row{display:flex;gap:8px;margin-top:14px}
 .m-cancel{
-  flex:1;padding:14px;border-radius:12px;
+  flex:1;padding:13px;border-radius:12px;
   border:1px solid var(--border);background:var(--surface2);
-  color:var(--muted);font-family:'Syne',sans-serif;font-weight:800;font-size:14px;
+  color:var(--muted);font-family:'Syne',sans-serif;font-weight:800;font-size:13px;
   touch-action:manipulation;transition:transform .1s;
 }
 .m-cancel:active{transform:scale(.95)}
 .m-save{
-  flex:2;padding:14px;border-radius:12px;
+  flex:2;padding:13px;border-radius:12px;
   border:none;background:var(--accent);
-  color:#000;font-family:'Syne',sans-serif;font-weight:800;font-size:14px;
+  color:#000;font-family:'Syne',sans-serif;font-weight:800;font-size:13px;
   touch-action:manipulation;transition:transform .1s,opacity .1s;
 }
 .m-save:active{transform:scale(.97);opacity:.85}
 
-/* ── FOOTER ── */
-footer{
-  flex-shrink:0;
-  padding:10px 16px;
-  border-top:1px solid var(--border);
-  display:flex;align-items:center;justify-content:space-between;
-  cursor:pointer;
-  touch-action:manipulation;
-}
-.footer-text{font-size:9px;color:rgba(255,255,255,.32)}
-.footer-hint{font-size:9px;color:rgba(255,255,255,.25)}
-
 /* ── TOAST ── */
 #toast{
   position:fixed;
-  top:calc(env(safe-area-inset-top) + 12px);
-  left:50%;transform:translateX(-50%) translateY(-100px);
-  background:rgba(15,15,15,.97);
-  border:1px solid var(--border);
-  color:#fff;padding:10px 18px;
-  border-radius:20px;font-size:13px;font-weight:500;
-  z-index:200;white-space:nowrap;pointer-events:none;
+  top:calc(env(safe-area-inset-top) + 10px);
+  left:50%;transform:translateX(-50%) translateY(-90px);
+  background:rgba(14,14,14,.97);border:1px solid var(--border);
+  color:#fff;padding:9px 16px;border-radius:18px;
+  font-size:12px;font-weight:500;z-index:200;
+  white-space:nowrap;pointer-events:none;
   transition:transform .28s cubic-bezier(.34,1.4,.64,1);
-  display:flex;align-items:center;gap:7px;
-  box-shadow:0 8px 32px rgba(0,0,0,.5);
+  display:flex;align-items:center;gap:6px;
+  box-shadow:0 6px 24px rgba(0,0,0,.5);
 }
 #toast.show{transform:translateX(-50%) translateY(0)}
-
-/* ── SWIPE HINT ── */
-.swipe-hint{
-  text-align:center;padding:20px 0 0;
-  font-size:10px;color:var(--muted);
-}
 </style>
 </head>
 <body>
 <div id="slide-root">
 
-  <!-- ══ PANEL 0 — LIST ══ -->
-  <div class="panel" id="p-list">
+  <!-- ══ PANEL 0 — ADD (default/left) ══ -->
+  <div class="panel" id="p-add">
     <header>
       <div class="logo-wrap">
         <div class="logo-title">Bobby San <span>B2B</span></div>
-        <div class="logo-sub">Prospection Instagram</div>
+        <div class="logo-sub">Design by systeme.one</div>
       </div>
       <div class="hbtns">
-        <button class="hbtn" id="btn-edit" onclick="toggleEdit()" title="Éditer">✏️</button>
-        <button class="hbtn" id="btn-add-go" onclick="goPanel(1)" title="Ajouter">＋</button>
+        <button class="hbtn" onclick="goList()" title="Liste">☰</button>
       </div>
       <div class="panel-dots">
-        <div class="dot on" id="dot0"></div>
-        <div class="dot" id="dot1"></div>
+        <div class="dot on" id="da0"></div>
+        <div class="dot" id="da1"></div>
+      </div>
+    </header>
+
+    <div class="panel-main" id="add-main">
+      <!-- Clip bar — auto-shown when IG link in clipboard -->
+      <div class="clip-bar" id="clip-bar">
+        <div class="clip-bar-av" id="clip-av">?</div>
+        <div class="clip-bar-info">
+          <div class="clip-bar-name" id="clip-name">@username</div>
+          <div class="clip-bar-url" id="clip-url">instagram.com/…</div>
+        </div>
+        <button class="clip-bar-dismiss" onclick="dismissClip()">✕</button>
+      </div>
+
+      <!-- Form — always visible, fields fill from clipboard -->
+      <div class="field">
+        <label class="field-label">Instagram</label>
+        <input id="inp-ig" class="field-input" type="url" placeholder="Lien ou @pseudo" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" inputmode="url" oninput="onIGInput()">
+      </div>
+
+      <div class="field">
+        <label class="field-label">Followers <span style="color:var(--muted);font-size:9px;text-transform:none;letter-spacing:0">(optionnel)</span></label>
+        <input id="inp-followers" class="field-input" type="text" placeholder="Ex: 12.4K, 8500…" autocomplete="off" autocorrect="off">
+      </div>
+
+      <div class="field">
+        <label class="field-label">Notes <span style="color:var(--muted);font-size:9px;text-transform:none;letter-spacing:0">(optionnel)</span></label>
+        <textarea id="inp-note" class="field-input" placeholder="Niche, contact, opportunité…" rows="3"></textarea>
+      </div>
+
+      <div class="b2b-row">
+        <div class="b2b-info">
+          <div class="b2b-label">Compte B2B 🏢</div>
+          <div class="b2b-sub">Entreprise ou professionnel</div>
+        </div>
+        <button class="tog" id="b2b-tog" onclick="togB2B()"><div class="tok"></div></button>
+      </div>
+
+      <button class="btn-main" id="btn-add" onclick="doAdd()" disabled>Ajouter à la liste</button>
+      <button class="btn-secondary" id="btn-add-another" onclick="addAndAnother()" disabled>+ Ajouter un autre</button>
+    </div>
+
+    <footer ondblclick="goList()">
+      <div>
+        <div class="footer-text" id="add-footer-count">0 comptes</div>
+        <div class="footer-brand">Design by systeme.one</div>
+      </div>
+      <span class="footer-hint">[2×] liste</span>
+    </footer>
+  </div>
+
+  <!-- ══ PANEL 1 — LIST (right) ══ -->
+  <div class="panel" id="p-list">
+    <header>
+      <button class="back-btn" onclick="goAdd()">‹</button>
+      <div class="logo-wrap">
+        <div class="logo-title">Liste <span>B2B</span></div>
+        <div class="logo-sub">Design by systeme.one</div>
+      </div>
+      <div class="hbtns">
+        <button class="hbtn" id="btn-edit" onclick="toggleEdit()">✏️</button>
+      </div>
+      <div class="panel-dots">
+        <div class="dot" id="dl0"></div>
+        <div class="dot on" id="dl1"></div>
       </div>
     </header>
 
@@ -612,102 +557,67 @@ footer{
       <button class="eb-done" onclick="toggleEdit()">Terminé</button>
     </div>
 
-    <div class="search-bar" id="search-bar-list">
-      <input class="search-input" id="search-input" placeholder="Rechercher un compte…" oninput="renderList()" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false">
+    <div class="search-bar" id="search-bar">
+      <input class="search-input" id="search-input" placeholder="Rechercher…" oninput="renderList()" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false">
     </div>
 
-    <div class="panel-main" id="list-main">
-      <!-- rendered by JS -->
-    </div>
+    <div class="panel-main" id="list-main"></div>
 
     <footer ondblclick="toggleSearch()">
-      <span class="footer-text" id="list-footer-text">0 comptes</span>
+      <div>
+        <div class="footer-text" id="list-footer">0 comptes</div>
+        <div class="footer-brand">Design by systeme.one</div>
+      </div>
       <span class="footer-hint">[2×] recherche</span>
     </footer>
   </div>
 
-  <!-- ══ PANEL 1 — ADD ══ -->
-  <div class="panel" id="p-add">
-    <header>
-      <button class="back-btn" onclick="goPanel(0)">‹</button>
-      <div class="logo-wrap">
-        <div class="logo-title">Ajouter</div>
-        <div class="logo-sub">Coller un lien Instagram</div>
-      </div>
-      <div class="panel-dots">
-        <div class="dot" id="dot2"></div>
-        <div class="dot on" id="dot3"></div>
-      </div>
-    </header>
-
-    <div class="panel-main">
-      <!-- Big tap zone -->
-      <div id="tap-zone" class="tap-zone" onclick="tzTap()">
-        <div class="tz-ic" id="tz-ic">📋</div>
-        <div class="tz-t" id="tz-t">Appuyer pour coller</div>
-        <div class="tz-s" id="tz-s">Copie un lien Instagram puis appuie ici</div>
-      </div>
-
-      <div id="add-fields" style="display:none">
-        <div id="prev-wrap"></div>
-
-        <div class="field">
-          <div class="field-label">Notes</div>
-          <textarea id="inp-note" class="field-input" placeholder="10K abonnés, DM ouvert, photographe…" rows="3"></textarea>
-        </div>
-
-        <div class="b2b-row">
-          <div class="b2b-info">
-            <div class="b2b-label">Compte B2B 🏢</div>
-            <div class="b2b-sub">Entreprise ou professionnel</div>
-          </div>
-          <button class="tog" id="b2b-tog" onclick="togB2B()"><div class="tok"></div></button>
-        </div>
-
-        <button class="btn-main" id="btn-confirm" onclick="doAdd()">Ajouter à la liste</button>
-      </div>
-
-      <div class="swipe-hint">← Glisser pour revenir</div>
-    </div>
-
-    <footer ondblclick="goPanel(0)">
-      <span class="footer-text">Nouveau compte</span>
-      <span class="footer-hint">[2×] retour</span>
-    </footer>
-  </div>
-
 </div>
 
-<!-- ══ DETAIL PANEL (overlay) ══ -->
-<div id="detail-overlay" style="position:fixed;inset:0;z-index:40;background:#0a0a0a;transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)">
+<!-- ══ DETAIL OVERLAY ══ -->
+<div id="detail-overlay">
   <header>
     <button class="back-btn" onclick="closeDetail()">‹</button>
     <div class="logo-wrap">
-      <div class="logo-title" id="detail-title">Profil</div>
-      <div class="logo-sub">Détail du compte</div>
+      <div class="logo-title" id="detail-header-name">Profil</div>
+      <div class="logo-sub">Design by systeme.one</div>
     </div>
     <div class="hbtns">
-      <button class="hbtn ab-ig" id="detail-ig-btn" onclick="openIG()" style="font-size:13px;font-family:'Syne',sans-serif;font-weight:800;width:auto;padding:0 12px">IG ↗</button>
+      <button class="hbtn detail-ig-btn" id="detail-ig-btn" onclick="openIG()" style="width:auto;padding:0 11px;font-family:'Syne',sans-serif;font-weight:800;font-size:11px">IG ↗</button>
     </div>
   </header>
-  <div style="flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch" id="detail-body"></div>
+
+  <div class="detail-scroll" id="detail-scroll"></div>
+
+  <!-- Active indicator — floats over footer, never shifts layout -->
+  <div class="active-indicator" id="active-indicator">
+    <div class="active-pulse"></div>
+    <span id="active-timer">Prospection en cours…</span>
+  </div>
+
   <footer>
-    <span class="footer-text" id="detail-footer"></span>
-    <span class="footer-hint"></span>
+    <div>
+      <div class="footer-text" id="detail-footer-date"></div>
+      <div class="footer-brand">Design by systeme.one</div>
+    </div>
   </footer>
 </div>
 
-<!-- ══ MODAL (edit) ══ -->
+<!-- ══ MODAL (edit note/b2b) ══ -->
 <div class="modal-bg" id="modal-bg" onclick="closeModal(event)">
-  <div class="modal" id="modal">
+  <div class="modal">
     <div class="modal-handle"></div>
     <div class="modal-title" id="modal-title">Modifier</div>
     <div class="modal-field">
-      <div class="modal-label">Notes</div>
-      <textarea class="modal-input" id="m-note" placeholder="Ex: 12K abonnés, DM ouvert…"></textarea>
+      <label class="modal-label">Followers</label>
+      <input class="modal-input" id="m-followers" type="text" placeholder="Ex: 12.4K…" autocomplete="off">
     </div>
-    <div class="modal-field" id="m-b2b-row">
-      <div class="b2b-row" style="margin:0">
+    <div class="modal-field">
+      <label class="modal-label">Notes</label>
+      <textarea class="modal-input" id="m-note" placeholder="Niche, contact, opportunité…"></textarea>
+    </div>
+    <div class="modal-field">
+      <div class="b2b-row" style="margin:0;background:var(--surface2)">
         <div class="b2b-info">
           <div class="b2b-label">Compte B2B 🏢</div>
           <div class="b2b-sub">Entreprise ou professionnel</div>
@@ -715,105 +625,94 @@ footer{
         <button class="tog" id="m-b2b-tog" onclick="togModalB2B()"><div class="tok"></div></button>
       </div>
     </div>
-    <div class="modal-actions">
+    <div class="modal-row">
       <button class="m-cancel" onclick="closeModal()">Annuler</button>
       <button class="m-save" onclick="saveModal()">Enregistrer</button>
     </div>
   </div>
 </div>
 
-<div id="toast"><span id="t-ic">✓</span><span id="t-msg">OK</span></div>
+<div id="toast"><span id="t-ic">✓</span> <span id="t-msg">OK</span></div>
 
 <script>
-/* ════════════════════════════════
+/* ══════════════════════════════
    DATA
-════════════════════════════════ */
-let DB = JSON.parse(localStorage.getItem('bsb1') || '[]');
-const save = () => localStorage.setItem('bsb1', JSON.stringify(DB));
+══════════════════════════════ */
+let DB = JSON.parse(localStorage.getItem('bsb2') || '[]');
+const save = () => localStorage.setItem('bsb2', JSON.stringify(DB));
 const uid  = () => Date.now().toString(36) + Math.random().toString(36).slice(2,6);
 
-let editMode  = false;
-let addState  = { u: null, url: null, b2b: false };
-let clipCache = null;
-let modalId   = null;
-let detailId  = null;
-let modalB2B  = false;
-let curPanel  = 0;
+let editMode   = false;
+let clipState  = null; // { u, url } from clipboard
+let clipDismissed = false;
+let modalId    = null;
+let detailId   = null;
+let modalB2B   = false;
+let curPanel   = 0;    // 0=add, 1=list
+let b2bAdd     = false;
+let activeTimer = null;
 
-/* ════════════════════════════════
+/* ══════════════════════════════
    HELPERS
-════════════════════════════════ */
+══════════════════════════════ */
 function exIG(s) {
-  if (!s) return null;
-  s = s.trim();
+  if (!s) return null; s = s.trim();
   const m = s.match(/instagram\.com\/([a-zA-Z0-9._]{1,30})/i);
   if (m) return m[1].replace(/\/$/, '').toLowerCase();
+  const m2 = s.match(/^@?([a-zA-Z0-9._]{2,30})$/);
+  if (m2) return m2[1].toLowerCase();
   return null;
 }
 function isIG(s) { return /instagram\.com\//i.test(s || ''); }
 function igUrl(u) { return 'https://instagram.com/' + u; }
 function ini(u)   { return (u || '?')[0].toUpperCase(); }
 
-/* ════════════════════════════════
+/* ══════════════════════════════
    CLIPBOARD
-════════════════════════════════ */
+══════════════════════════════ */
 async function readClip() {
   try { return navigator.clipboard?.readText ? await navigator.clipboard.readText() : null; }
   catch { return null; }
 }
-async function prefetch() {
+
+async function checkClip(forceShow) {
   const txt = await readClip();
-  clipCache = txt;
-  if (txt && isIG(txt)) {
-    const u = exIG(txt);
-    if (u) { setTZ(u); return; }
-  }
-  if (!addState.u) resetTZ();
-}
-
-document.addEventListener('visibilitychange', () => { if (!document.hidden) prefetch(); });
-window.addEventListener('focus', prefetch);
-
-function setTZ(u) {
-  document.getElementById('tz-ic').textContent = '✨';
-  document.getElementById('tz-t').textContent  = '@' + u + ' détecté';
-  document.getElementById('tz-s').textContent  = 'Appuie pour ajouter instantanément';
-  document.getElementById('tap-zone').classList.add('ready');
-}
-function resetTZ() {
-  document.getElementById('tz-ic').textContent = '📋';
-  document.getElementById('tz-t').textContent  = 'Appuyer pour coller';
-  document.getElementById('tz-s').textContent  = 'Copie un lien Instagram puis appuie ici';
-  document.getElementById('tap-zone').classList.remove('ready');
-}
-
-async function tzTap() {
-  const txt = clipCache || await readClip(); clipCache = null;
-  if (!txt || !isIG(txt)) { toast('📋', 'Aucun lien Instagram copié'); return; }
+  if (!txt || !isIG(txt)) return;
   const u = exIG(txt);
-  if (!u) { toast('⚠️', 'Lien invalide'); return; }
-  if (DB.find(a => a.username === u)) { toast('⚠️', '@' + u + ' déjà dans la liste'); return; }
-  addState = { u, url: igUrl(u), b2b: false };
-  showPreview(u);
-  document.getElementById('add-fields').style.display = 'block';
-  document.getElementById('tap-zone').style.display   = 'none';
+  if (!u) return;
+  if (clipDismissed) return;
+  // Don't show if same as current input
+  const cur = document.getElementById('inp-ig').value.trim();
+  if (cur && exIG(cur) === u) return;
+  clipState = { u, url: igUrl(u), raw: txt };
+  showClipBar(u);
+  // Auto-fill input if empty
+  if (!cur) {
+    document.getElementById('inp-ig').value = txt;
+    onIGInput(true);
+  }
 }
 
-function showPreview(u) {
-  document.getElementById('prev-wrap').innerHTML = `
-    <div class="preview-card">
-      <div class="prev-av">${ini(u)}</div>
-      <div class="prev-info">
-        <div class="prev-name">@${u}</div>
-        <div class="prev-url">instagram.com/${u}</div>
-      </div>
-      <div class="prev-ok">✅</div>
-    </div>`;
+function showClipBar(u) {
+  document.getElementById('clip-av').textContent   = ini(u);
+  document.getElementById('clip-name').textContent = '@' + u;
+  document.getElementById('clip-url').textContent  = 'instagram.com/' + u;
+  document.getElementById('clip-bar').classList.add('show');
 }
 
-/* ════════════════════════════════
+function dismissClip() {
+  clipDismissed = true;
+  document.getElementById('clip-bar').classList.remove('show');
+}
+
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) { clipDismissed = false; checkClip(); updateFooterCount(); }
+});
+window.addEventListener('focus', () => { clipDismissed = false; checkClip(); });
+
+/* ══════════════════════════════
    URL PARAM (Shortcut iOS)
-════════════════════════════════ */
+══════════════════════════════ */
 function checkParam() {
   const p = new URLSearchParams(location.search);
   const raw = p.get('add') || p.get('u');
@@ -822,104 +721,205 @@ function checkParam() {
   const u = exIG(decodeURIComponent(raw));
   if (!u) return;
   if (DB.find(a => a.username === u)) { toast('⚠️', 'Déjà dans la liste'); return; }
-  DB.unshift(mkAcc(u, igUrl(u), '', false));
-  save(); renderList();
+  DB.unshift(mkAcc(u, igUrl(u), '', '', false));
+  save(); renderList(); updateFooterCount();
   toast('✅', '@' + u + ' ajouté via Raccourci');
 }
 
-function mkAcc(username, url, note, b2b) {
-  return { id: uid(), username, url, note: note || '', b2b: !!b2b, status: 'prospect', addedAt: Date.now(), activeAt: null };
+function mkAcc(username, url, note, followers, b2b) {
+  return { id: uid(), username, url, note: note || '', followers: followers || '', b2b: !!b2b, status: 'prospect', addedAt: Date.now(), activeAt: null };
 }
 
-/* ════════════════════════════════
-   ADD
-════════════════════════════════ */
-function togB2B() {
-  addState.b2b = !addState.b2b;
-  document.getElementById('b2b-tog').classList.toggle('on', addState.b2b);
-}
-
-function doAdd() {
-  if (!addState.u) return;
-  const note = document.getElementById('inp-note').value.trim();
-  DB.unshift(mkAcc(addState.u, addState.url, note, addState.b2b));
-  save(); renderList();
-  toast('✅', '@' + addState.u + ' ajouté !');
-  resetAdd();
-  goPanel(0);
-}
-
-function resetAdd() {
-  addState = { u: null, url: null, b2b: false };
-  document.getElementById('prev-wrap').innerHTML = '';
-  document.getElementById('add-fields').style.display = 'none';
-  document.getElementById('inp-note').value = '';
-  document.getElementById('b2b-tog').classList.remove('on');
-  document.getElementById('tap-zone').style.display = 'flex';
-  resetTZ();
-}
-
-/* ════════════════════════════════
-   PANEL NAVIGATION
-════════════════════════════════ */
-function goPanel(n) {
-  curPanel = n;
-  document.getElementById('slide-root').style.transform = n === 0 ? '' : 'translateX(-50%)';
-  // dots
-  document.getElementById('dot0').classList.toggle('on', n === 0);
-  document.getElementById('dot1').classList.toggle('on', n === 1);
-  document.getElementById('dot2').classList.toggle('on', n === 0);
-  document.getElementById('dot3').classList.toggle('on', n === 1);
-  if (n === 0) renderList();
-}
-
-/* ════════════════════════════════
-   SWIPE GESTURE
-════════════════════════════════ */
-(function(){
-  let x0=0,y0=0,t0=0,moving=false;
-  const root = document.getElementById('slide-root');
-  document.addEventListener('touchstart', e => {
-    x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; t0 = Date.now(); moving = false;
-  }, { passive: true });
-  document.addEventListener('touchend', e => {
-    if (moving) return;
-    const dx = e.changedTouches[0].clientX - x0;
-    const dy = e.changedTouches[0].clientY - y0;
-    const dt = Date.now() - t0;
-    const vel = Math.abs(dx) / dt;
-    const intentional = Math.abs(dx) > Math.abs(dy) * 1.5;
-    if (!intentional) return;
-    const flick = vel > 0.35 && Math.abs(dx) > 30;
-    const drag  = Math.abs(dx) > 60;
-    if (!flick && !drag) return;
-    if (dx < 0 && curPanel === 0) goPanel(1);
-    if (dx > 0 && curPanel === 1) goPanel(0);
-  }, { passive: true });
-  document.addEventListener('touchmove', e => {
-    const dx = e.touches[0].clientX - x0;
-    const dy = e.touches[0].clientY - y0;
-    if (Math.abs(dx) > 8) moving = true;
-  }, { passive: true });
-})();
-
-/* ════════════════════════════════
-   SEARCH
-════════════════════════════════ */
-function toggleSearch() {
-  const bar = document.getElementById('search-bar-list');
-  bar.classList.toggle('open');
-  if (bar.classList.contains('open')) {
-    document.getElementById('search-input').focus();
+/* ══════════════════════════════
+   ADD FORM
+══════════════════════════════ */
+function onIGInput(silent) {
+  const val = document.getElementById('inp-ig').value.trim();
+  const u   = exIG(val);
+  const ok  = !!u;
+  document.getElementById('btn-add').disabled         = !ok;
+  document.getElementById('btn-add-another').disabled = !ok;
+  if (ok) {
+    document.getElementById('btn-add-another').classList.add('ready');
   } else {
-    document.getElementById('search-input').value = '';
-    renderList();
+    document.getElementById('btn-add-another').classList.remove('ready');
   }
 }
 
-/* ════════════════════════════════
+function togB2B() {
+  b2bAdd = !b2bAdd;
+  document.getElementById('b2b-tog').classList.toggle('on', b2bAdd);
+}
+
+function collectForm() {
+  const raw       = document.getElementById('inp-ig').value.trim();
+  const u         = exIG(raw);
+  const followers = document.getElementById('inp-followers').value.trim();
+  const note      = document.getElementById('inp-note').value.trim();
+  return { u, url: igUrl(u||'?'), followers, note, b2b: b2bAdd };
+}
+
+function doAdd() {
+  const f = collectForm(); if (!f.u) return;
+  if (DB.find(a => a.username === f.u)) { toast('⚠️', '@' + f.u + ' déjà dans la liste'); return; }
+  DB.unshift(mkAcc(f.u, f.url, f.note, f.followers, f.b2b));
+  save(); renderList(); updateFooterCount();
+  toast('✅', '@' + f.u + ' ajouté !');
+  resetForm();
+}
+
+function addAndAnother() {
+  const f = collectForm(); if (!f.u) return;
+  if (!DB.find(a => a.username === f.u)) {
+    DB.unshift(mkAcc(f.u, f.url, f.note, f.followers, f.b2b));
+    save(); renderList(); updateFooterCount();
+    toast('✅', '@' + f.u + ' ajouté !');
+  } else {
+    toast('⚠️', '@' + f.u + ' déjà dans la liste');
+  }
+  // Reset form but keep clipboard check for next
+  resetForm();
+  clipDismissed = false;
+  setTimeout(() => checkClip(), 100);
+}
+
+function resetForm() {
+  document.getElementById('inp-ig').value        = '';
+  document.getElementById('inp-followers').value = '';
+  document.getElementById('inp-note').value      = '';
+  document.getElementById('b2b-tog').classList.remove('on');
+  document.getElementById('btn-add').disabled         = true;
+  document.getElementById('btn-add-another').disabled = true;
+  document.getElementById('btn-add-another').classList.remove('ready');
+  document.getElementById('clip-bar').classList.remove('show');
+  b2bAdd = false; clipState = null;
+}
+
+function updateFooterCount() {
+  const n = DB.length;
+  const t = n + ' compte' + (n !== 1 ? 's' : '');
+  document.getElementById('add-footer-count').textContent = t;
+  document.getElementById('list-footer').textContent      = t;
+}
+
+/* ══════════════════════════════
+   PANEL NAV
+══════════════════════════════ */
+function goList() {
+  curPanel = 1;
+  document.getElementById('slide-root').classList.add('show-list');
+  setDots(1);
+  renderList();
+}
+function goAdd() {
+  curPanel = 0;
+  document.getElementById('slide-root').classList.remove('show-list');
+  setDots(0);
+}
+function setDots(n) {
+  document.getElementById('da0').classList.toggle('on', n === 0);
+  document.getElementById('da1').classList.toggle('on', n === 1);
+  document.getElementById('dl0').classList.toggle('on', n === 0);
+  document.getElementById('dl1').classList.toggle('on', n === 1);
+}
+
+/* ══════════════════════════════
+   SWIPE GESTURE — panels
+══════════════════════════════ */
+(function(){
+  let x0=0,y0=0,t0=0,didMove=false;
+  const getTouch = e => e.changedTouches ? e.changedTouches[0] : e.touches[0];
+
+  document.addEventListener('touchstart', e => {
+    // Don't intercept if detail is open or modal is open
+    if (document.getElementById('detail-overlay').classList.contains('open')) return;
+    if (document.getElementById('modal-bg').classList.contains('on')) return;
+    const t = getTouch(e);
+    x0 = t.clientX; y0 = t.clientY; t0 = Date.now(); didMove = false;
+  }, { passive: true });
+
+  document.addEventListener('touchmove', e => {
+    if (!x0) return;
+    const t  = getTouch(e);
+    const dx = t.clientX - x0;
+    const dy = t.clientY - y0;
+    if (Math.abs(dx) > 6 || Math.abs(dy) > 6) didMove = true;
+  }, { passive: true });
+
+  document.addEventListener('touchend', e => {
+    if (!didMove) { x0=0; return; }
+    const t   = getTouch(e);
+    const dx  = t.clientX - x0;
+    const dy  = t.clientY - y0;
+    const dt  = Date.now() - t0;
+    const vel = Math.abs(dx) / Math.max(dt, 1);
+    x0 = 0;
+    if (Math.abs(dx) < Math.abs(dy) * 1.4) return; // mostly vertical
+    const flick = vel > 0.3 && Math.abs(dx) > 25;
+    const drag  = Math.abs(dx) > 55;
+    if (!flick && !drag) return;
+    if (dx < 0 && curPanel === 0) goList();
+    if (dx > 0 && curPanel === 1) goAdd();
+  }, { passive: true });
+})();
+
+/* ══════════════════════════════
+   SWIPE BACK — detail
+══════════════════════════════ */
+(function(){
+  let x0=0,y0=0,didMove=false;
+  const det = document.getElementById('detail-overlay');
+  const scr = document.getElementById('detail-scroll');
+
+  det.addEventListener('touchstart', e => {
+    const t = e.touches[0];
+    x0 = t.clientX; y0 = t.clientY; didMove = false;
+  }, { passive: true });
+
+  det.addEventListener('touchmove', e => {
+    const t  = e.touches[0];
+    const dx = t.clientX - x0;
+    const dy = t.clientY - y0;
+    if (Math.abs(dx) > 6 || Math.abs(dy) > 6) didMove = true;
+    // Visual drag (right only, from left edge or anywhere)
+    if (dx > 0 && Math.abs(dx) > Math.abs(dy) * 1.2) {
+      const clamped = Math.min(dx, window.innerWidth);
+      det.style.transition = 'none';
+      det.style.transform  = `translateX(${clamped}px)`;
+    }
+  }, { passive: true });
+
+  det.addEventListener('touchend', e => {
+    const t   = e.changedTouches[0];
+    const dx  = t.clientX - x0;
+    const dy  = t.clientY - y0;
+    const dt  = Date.now(); // approx
+    det.style.transition = 'transform .32s cubic-bezier(.4,0,.2,1)';
+    if (!didMove) { det.style.transform = ''; return; }
+    const isHoriz = Math.abs(dx) > Math.abs(dy) * 1.2;
+    const flick   = dx > 80 && isHoriz;
+    const drag    = dx > window.innerWidth * 0.4 && isHoriz;
+    if (flick || drag) {
+      closeDetail();
+    } else {
+      det.style.transform = 'translateX(0)';
+    }
+  }, { passive: true });
+})();
+
+/* ══════════════════════════════
+   SEARCH
+══════════════════════════════ */
+function toggleSearch() {
+  const bar = document.getElementById('search-bar');
+  bar.classList.toggle('open');
+  if (bar.classList.contains('open')) document.getElementById('search-input').focus();
+  else { document.getElementById('search-input').value = ''; renderList(); }
+}
+
+/* ══════════════════════════════
    EDIT MODE
-════════════════════════════════ */
+══════════════════════════════ */
 function toggleEdit() {
   editMode = !editMode;
   document.getElementById('btn-edit').classList.toggle('on', editMode);
@@ -927,9 +927,9 @@ function toggleEdit() {
   renderList();
 }
 
-/* ════════════════════════════════
-   LIST RENDER
-════════════════════════════════ */
+/* ══════════════════════════════
+   LIST
+══════════════════════════════ */
 function checkExpired() {
   const T2H = 7200000; let d = false;
   DB.forEach(a => {
@@ -941,91 +941,89 @@ function checkExpired() {
 }
 
 function renderList() {
-  checkExpired();
+  checkExpired(); updateFooterCount();
   const q = (document.getElementById('search-input')?.value || '').toLowerCase();
-  let data = q ? DB.filter(a => a.username.includes(q) || (a.note||'').toLowerCase().includes(q)) : [...DB];
+  let data = q ? DB.filter(a => a.username.includes(q) || (a.note || '').toLowerCase().includes(q)) : [...DB];
   const main = document.getElementById('list-main');
-  const ftxt = document.getElementById('list-footer-text');
-  ftxt.textContent = DB.length + ' compte' + (DB.length !== 1 ? 's' : '');
 
   if (!data.length) {
-    main.innerHTML = `<div class="empty"><div class="em-ic">📋</div><div class="em-t">${q ? 'Aucun résultat' : 'Liste vide'}</div><div class="em-s">${q ? 'Essaie un autre terme' : 'Appuie sur + pour ajouter un compte Instagram'}</div></div>`;
+    main.innerHTML = `<div class="empty"><div class="em-ic">📋</div><div class="em-t">${q ? 'Aucun résultat' : 'Liste vide'}</div><div class="em-s">${q ? 'Essaie un autre terme' : 'Retourne sur Ajouter pour créer ton premier compte'}</div></div>`;
     return;
   }
 
   const active   = data.filter(a => a.status === 'active_prospect');
   const prospect = data.filter(a => a.status === 'prospect');
   const done     = data.filter(a => a.status === 'done');
-
   let html = '';
   if (active.length)   html += `<div class="section-label">En cours</div>` + active.map(cardHTML).join('');
   if (prospect.length) html += `<div class="section-label">À prospecter</div>` + prospect.map(cardHTML).join('');
   if (done.length)     html += `<div class="section-label">Prospectés</div>` + done.map(cardHTML).join('');
-
   main.innerHTML = html;
 }
 
 function cardHTML(a) {
-  const statusLabel = { prospect: 'À prospecter', active_prospect: 'En cours…', done: 'Prospecté ✓' }[a.status];
-  const pillClass   = { prospect: 'pill-prospect', active_prospect: 'pill-active', done: 'pill-done' }[a.status];
-  const b2bPill     = a.b2b ? `<span class="pill-b2b">B2B</span>` : '';
-  const preview     = a.note || 'instagram.com/' + a.username;
-
+  const pillCls = { prospect: 'pill-prospect', active_prospect: 'pill-active', done: 'pill-done' };
+  const pillTxt = { prospect: 'À prospecter', active_prospect: 'En cours…', done: 'Prospecté ✓' };
+  const b2pPill = a.b2b ? `<span class="pill pill-b2b">B2B</span>` : '';
+  const fPill   = a.followers ? `<span style="color:var(--muted);font-size:10px">${a.followers}</span>` : '';
+  const preview = a.note ? a.note : 'instagram.com/' + a.username;
   return `
-  <button type="button" class="acc-card" id="card-${a.id}" data-confirm="Ajouté ✓" onclick="cardTap('${a.id}')">
+  <button type="button" class="acc-card" id="card-${a.id}" onclick="cardTap('${a.id}')">
     <div class="card-av">${ini(a.username)}</div>
     <div class="card-body">
-      <div class="card-name">@${a.username} ${a.b2b ? '🏢' : ''}</div>
+      <div class="card-name">@${a.username}${a.b2b ? ' 🏢' : ''}</div>
       <div class="card-preview">
-        ${b2bPill}
-        <span class="pill-status ${pillClass}">${statusLabel}</span>
-        <span>${preview}</span>
+        <span class="pill ${pillCls[a.status]}">${pillTxt[a.status]}</span>
+        ${b2pPill}${fPill}
+        <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px">${a.note || ''}</span>
       </div>
     </div>
     <div class="card-arrow">›</div>
-    <div class="edit-overlay ${editMode ? 'on' : ''}" id="eo-${a.id}">
+    <div class="edit-overlay${editMode ? ' on' : ''}" id="eo-${a.id}" onclick="eoClick(event,'${a.id}')">
       <button type="button" class="eo-btn eo-edit" onclick="editCard(event,'${a.id}')">✏️ Modifier</button>
-      <button type="button" class="eo-btn eo-del"  onclick="delCard(event,'${a.id}')">🗑 Supprimer</button>
+      <button type="button" class="eo-btn eo-del"  onclick="delCard(event,'${a.id}')">🗑 Suppr.</button>
     </div>
   </button>`;
 }
 
+function eoClick(e, id) { e.stopPropagation(); e.preventDefault(); }
+
 function cardTap(id) {
-  if (editMode) return; // edit overlay handles it
+  if (editMode) return;
   openDetail(id);
 }
 
-/* ════════════════════════════════
+/* ══════════════════════════════
    DETAIL
-════════════════════════════════ */
+══════════════════════════════ */
 function openDetail(id) {
   detailId = id;
   const a = DB.find(x => x.id === id); if (!a) return;
-  document.getElementById('detail-title').textContent = '@' + a.username;
-  document.getElementById('detail-footer').textContent = 'Ajouté le ' + new Date(a.addedAt).toLocaleDateString('fr');
+  document.getElementById('detail-header-name').textContent = '@' + a.username;
+  document.getElementById('detail-footer-date').textContent = 'Ajouté le ' + new Date(a.addedAt).toLocaleDateString('fr');
 
-  const activeBar = a.status === 'active_prospect' ? `
-    <div class="active-bar">
-      <div class="active-pulse"></div>
-      Prospection en cours depuis ${Math.round((Date.now() - a.activeAt) / 60000)} min
-    </div>` : '';
-
-  const statusHTML = ['prospect','active_prospect','done'].map(s => {
-    const labels = { prospect:'📋 À prospecter', active_prospect:'⏳ En cours', done:'✅ Prospecté' };
-    const cls    = { prospect:'on-prospect', active_prospect:'on-active', done:'on-done' };
-    const on     = a.status === s ? cls[s] : '';
-    return `<button type="button" class="status-btn ${on}" onclick="setStatus('${s}')">${labels[s].split(' ')[0]}<br>${labels[s].split(' ').slice(1).join(' ')}</button>`;
+  const statusHTML = ['prospect', 'active_prospect', 'done'].map(s => {
+    const lbl = { prospect: ['📋','À prospecter'], active_prospect: ['⏳','En cours'], done: ['✅','Prospecté'] };
+    const cls = { prospect: 'on-prospect', active_prospect: 'on-active', done: 'on-done' }[s];
+    const on  = a.status === s ? cls : '';
+    return `<button type="button" class="status-btn ${on}" onclick="setStatus('${s}')"><span class="sb-ic">${lbl[s][0]}</span>${lbl[s][1]}</button>`;
   }).join('');
 
-  document.getElementById('detail-body').innerHTML = `
-    ${activeBar}
+  const followersBlock = a.followers ? `
+    <div class="meta-row">
+      <div class="meta-item"><div class="meta-label">Followers</div><div class="meta-value">${a.followers}</div></div>
+      ${a.b2b ? '<div class="meta-item"><div class="meta-label">Type</div><div class="meta-value" style="color:var(--service)">B2B 🏢</div></div>' : ''}
+    </div>` : '';
+
+  document.getElementById('detail-scroll').innerHTML = `
     <div class="detail-hero">
       <div class="detail-av">${ini(a.username)}</div>
       <div class="detail-info">
         <div class="detail-name">@${a.username}</div>
         <div class="detail-url">instagram.com/${a.username}</div>
         <div class="detail-pills">
-          ${a.b2b ? '<span class="pill-b2b">B2B</span>' : ''}
+          ${a.b2b ? '<span class="pill pill-b2b">B2B</span>' : ''}
+          ${a.followers ? `<span class="pill" style="background:rgba(232,255,71,.06);color:var(--accent)">${a.followers}</span>` : ''}
         </div>
       </div>
     </div>
@@ -1035,27 +1033,56 @@ function openDetail(id) {
     </div>
     <div class="detail-section">
       <div class="detail-section-label">Note — appuie pour modifier</div>
-      <div class="note-box ${a.note ? '' : 'empty-note'}" onclick="openEditModal('${a.id}')">${a.note || 'Aucune note. Appuie pour en ajouter.'}</div>
+      <div class="note-box ${a.note ? '' : 'note-empty'}" onclick="openEditModal('${a.id}')">${a.note || 'Aucune note. Appuie pour en ajouter.'}</div>
     </div>
     <div class="action-row">
-      <button type="button" class="action-btn ab-ig" onclick="openIG()">Ouvrir Instagram ↗</button>
-      <button type="button" class="action-btn ab-del" onclick="confirmDelete('${a.id}')">Supprimer</button>
+      <button type="button" class="action-btn ab-edit" onclick="openEditModal('${a.id}')">✏️ Modifier</button>
+      <button type="button" class="action-btn ab-del"  onclick="confirmDelete('${a.id}')">🗑 Supprimer</button>
     </div>`;
 
+  // Active indicator
+  updateActiveIndicator(a);
+  startActiveTimer(a);
+
   const overlay = document.getElementById('detail-overlay');
-  overlay.style.transform = 'translateX(0)';
+  overlay.style.transform = '';
+  overlay.classList.add('open');
+}
+
+function updateActiveIndicator(a) {
+  const ind = document.getElementById('active-indicator');
+  if (a.status === 'active_prospect' && a.activeAt) {
+    const mins = Math.round((Date.now() - a.activeAt) / 60000);
+    document.getElementById('active-timer').textContent = mins < 1 ? 'Prospection en cours…' : `En cours depuis ${mins} min`;
+    ind.classList.add('show');
+  } else {
+    ind.classList.remove('show');
+  }
+}
+
+function startActiveTimer(a) {
+  clearInterval(activeTimer);
+  if (a.status !== 'active_prospect') return;
+  activeTimer = setInterval(() => {
+    const cur = DB.find(x => x.id === a.id);
+    if (!cur) { clearInterval(activeTimer); return; }
+    updateActiveIndicator(cur);
+  }, 15000);
 }
 
 function closeDetail() {
-  document.getElementById('detail-overlay').style.transform = 'translateX(100%)';
+  clearInterval(activeTimer);
+  const overlay = document.getElementById('detail-overlay');
+  overlay.style.transition = 'transform .32s cubic-bezier(.4,0,.2,1)';
+  overlay.classList.remove('open');
+  overlay.style.transform = '';
   detailId = null;
 }
 
 function openIG() {
   if (!detailId) return;
   const a = DB.find(x => x.id === detailId); if (!a) return;
-  // Set active_prospect on open
-  if (a.status === 'prospect') { a.status = 'active_prospect'; a.activeAt = Date.now(); save(); }
+  if (a.status === 'prospect') { a.status = 'active_prospect'; a.activeAt = Date.now(); save(); updateActiveIndicator(a); startActiveTimer(a); renderList(); }
   window.open(a.url, '_blank');
 }
 
@@ -1064,71 +1091,72 @@ function setStatus(s) {
   const a = DB.find(x => x.id === detailId); if (!a) return;
   a.status = s;
   if (s === 'active_prospect') a.activeAt = Date.now();
-  else if (s !== 'active_prospect') a.activeAt = null;
-  save(); openDetail(detailId); renderList();
-  toast('✓', { prospect: 'À prospecter', active_prospect: 'En cours…', done: 'Prospecté ✓' }[s]);
+  else a.activeAt = null;
+  save(); renderList();
+  updateActiveIndicator(a);
+  startActiveTimer(a);
+  // Refresh status buttons
+  document.querySelectorAll('.status-btn').forEach(btn => {
+    btn.className = btn.className.replace(/ on-\w+/g, '');
+  });
+  const map = { prospect: 'on-prospect', active_prospect: 'on-active', done: 'on-done' };
+  document.querySelectorAll('.status-btn').forEach((btn, i) => {
+    const ss = ['prospect', 'active_prospect', 'done'][i];
+    if (ss === s) btn.classList.add(map[s]);
+  });
+  const lbl = { prospect: 'À prospecter', active_prospect: 'En cours…', done: 'Prospecté ✓' };
+  toast('✓', lbl[s]);
 }
 
 function confirmDelete(id) {
-  if (confirm('Supprimer ce compte ?')) { delCard(null, id); closeDetail(); }
+  if (confirm('Supprimer @' + (DB.find(a => a.id === id)?.username || '') + ' ?')) {
+    DB = DB.filter(a => a.id !== id); save(); renderList(); updateFooterCount(); closeDetail();
+    toast('🗑', 'Supprimé');
+  }
 }
 
-/* ════════════════════════════════
+/* ══════════════════════════════
    EDIT CARD (edit mode)
-════════════════════════════════ */
-function editCard(e, id) {
-  if (e) { e.stopPropagation(); e.preventDefault(); }
-  openEditModal(id);
-}
+══════════════════════════════ */
+function editCard(e, id) { e.stopPropagation(); e.preventDefault(); openEditModal(id); }
+function delCard(e, id)  { e.stopPropagation(); e.preventDefault(); DB = DB.filter(a => a.id !== id); save(); renderList(); updateFooterCount(); toast('🗑', 'Supprimé'); }
 
-function delCard(e, id) {
-  if (e) { e.stopPropagation(); e.preventDefault(); }
-  DB = DB.filter(a => a.id !== id);
-  save(); renderList();
-  toast('🗑', 'Supprimé');
-}
-
-/* ════════════════════════════════
-   MODAL (edit)
-════════════════════════════════ */
+/* ══════════════════════════════
+   MODAL
+══════════════════════════════ */
 function openEditModal(id) {
   modalId = id;
   const a = DB.find(x => x.id === id); if (!a) return;
   modalB2B = a.b2b;
-  document.getElementById('m-note').value = a.note || '';
+  document.getElementById('m-followers').value = a.followers || '';
+  document.getElementById('m-note').value      = a.note || '';
   document.getElementById('m-b2b-tog').classList.toggle('on', modalB2B);
   document.getElementById('modal-title').textContent = 'Modifier @' + a.username;
   document.getElementById('modal-bg').classList.add('on');
   setTimeout(() => document.getElementById('m-note').focus(), 350);
 }
-
 function closeModal(e) {
   if (e && e.target !== document.getElementById('modal-bg')) return;
   document.getElementById('modal-bg').classList.remove('on');
   modalId = null;
 }
-
-function togModalB2B() {
-  modalB2B = !modalB2B;
-  document.getElementById('m-b2b-tog').classList.toggle('on', modalB2B);
-}
-
+function togModalB2B() { modalB2B = !modalB2B; document.getElementById('m-b2b-tog').classList.toggle('on', modalB2B); }
 function saveModal() {
   if (!modalId) return;
   const a = DB.find(x => x.id === modalId); if (!a) return;
-  a.note = document.getElementById('m-note').value.trim();
-  a.b2b  = modalB2B;
-  save();
+  a.followers = document.getElementById('m-followers').value.trim();
+  a.note      = document.getElementById('m-note').value.trim();
+  a.b2b       = modalB2B;
+  save(); renderList();
   document.getElementById('modal-bg').classList.remove('on');
   modalId = null;
-  renderList();
   if (detailId) openDetail(detailId);
   toast('✅', 'Enregistré');
 }
 
-/* ════════════════════════════════
+/* ══════════════════════════════
    TOAST
-════════════════════════════════ */
+══════════════════════════════ */
 let toastT;
 function toast(ic, msg) {
   document.getElementById('t-ic').textContent  = ic;
@@ -1136,21 +1164,19 @@ function toast(ic, msg) {
   const el = document.getElementById('toast');
   el.classList.add('show');
   clearTimeout(toastT);
-  toastT = setTimeout(() => el.classList.remove('show'), 2400);
+  toastT = setTimeout(() => el.classList.remove('show'), 2300);
 }
 
-/* ════════════════════════════════
+/* ══════════════════════════════
    INIT
-════════════════════════════════ */
+══════════════════════════════ */
 renderList();
+updateFooterCount();
 checkParam();
-prefetch();
+setTimeout(() => checkClip(), 300);
 
 document.addEventListener('visibilitychange', () => {
-  if (!document.hidden) {
-    checkExpired();
-    renderList();
-  }
+  if (!document.hidden) { checkExpired(); renderList(); }
 });
 </script>
 </body>
