@@ -1,389 +1,1157 @@
 <!DOCTYPE html>
-
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no, maximum-scale=1">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Prospect">
-<title>Prospect</title>
+<meta name="apple-mobile-web-app-title" content="Bobby San B2B">
+<title>Bobby San B2B</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none}
-html{height:100%;background:#000}
-body{height:100dvh;overflow:hidden;background:#000;color:#fff;font-family:-apple-system,BlinkMacSystemFont,sans-serif;-webkit-font-smoothing:antialiased;position:fixed;width:100%;overscroll-behavior:none}
-:root{
-  --g:#00E676;--gd:#00C853;--gs:rgba(0,230,118,.12);--gb:rgba(0,230,118,.05);
-  --s1:#0d0d0d;--s2:#161616;--s3:#222;
-  --ln:rgba(255,255,255,.07);
-  --t1:#fff;--t2:rgba(255,255,255,.5);--t3:rgba(255,255,255,.2);
-  --red:#FF453A;--blue:#0A84FF;--purple:#BF5AF2;--yellow:#FFD60A;
-  --st:env(safe-area-inset-top,44px);--sb:env(safe-area-inset-bottom,34px);
-  --r:16px;
+/* ── RESET ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{
+  -webkit-tap-highlight-color:transparent;
+  overscroll-behavior:none;
+  background:#0a0a0a;
+  color:#f0f0f0;
+  font-family:'DM Mono',monospace;
+  height:100%;
+  overflow:hidden;
+  padding-top:env(safe-area-inset-top);
+  padding-bottom:env(safe-area-inset-bottom);
+  position:fixed;width:100%;
 }
-#app{display:flex;flex-direction:column;height:100dvh}
-/* HEADER */
-#hdr{padding-top:calc(var(--st) + 2px);background:#000;flex-shrink:0;z-index:20}
-.hdr-inner{display:flex;align-items:center;justify-content:space-between;padding:0 20px 12px}
-.logo{display:flex;align-items:center;gap:9px}
-.logo-dot{width:9px;height:9px;border-radius:50%;background:var(--g);box-shadow:0 0 10px var(--g);animation:glow 2.5s ease-in-out infinite}
-@keyframes glow{0%,100%{box-shadow:0 0 6px var(--g)}50%{box-shadow:0 0 20px var(--g),0 0 40px rgba(0,230,118,.25)}}
-.logo-text{font-size:20px;font-weight:700;letter-spacing:-.4px}
-/* FAB */
-#fab{width:44px;height:44px;border-radius:50%;background:var(--g);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;position:relative;transition:transform .12s;flex-shrink:0}
-#fab:active{transform:scale(.88)}
-#fab svg{width:22px;height:22px;fill:#000}
-.fab-ring{position:absolute;inset:-3px;border-radius:50%;border:2px solid transparent;transition:all .3s}
-#fab.has-ig .fab-ring{border-color:var(--g);animation:spin 3s linear infinite;box-shadow:0 0 16px rgba(0,230,118,.4)}
-@keyframes spin{to{transform:rotate(360deg)}}
-#fab.pop{animation:pop .35s cubic-bezier(.34,1.6,.64,1)}
-@keyframes pop{0%{transform:scale(1)}35%{transform:scale(.82)}70%{transform:scale(1.1)}100%{transform:scale(1)}}
-/* NAV */
-.nav{display:flex;padding:0 20px;border-bottom:1px solid var(--ln)}
-.nb{flex:1;padding:10px 0;font-size:13px;font-weight:700;color:var(--t3);background:none;border:none;cursor:pointer;position:relative;display:flex;align-items:center;justify-content:center;gap:6px;transition:color .18s}
-.nb.on{color:var(--g)}
-.nb.on::after{content:'';position:absolute;bottom:-1px;left:12px;right:12px;height:2px;background:var(--g);border-radius:2px 2px 0 0;box-shadow:0 0 8px var(--g)}
-.nbadge{background:var(--gs);color:var(--g);font-size:10px;font-weight:900;padding:1px 6px;border-radius:8px;min-width:18px;text-align:center}
-/* PAGES */
-#pages{flex:1;overflow:hidden;position:relative}
-.page{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);visibility:hidden;will-change:transform}
-.page.left{transform:translateX(-25%)}
-.page.active{transform:translateX(0);visibility:visible}
-/* ADD PAGE */
-#p-add{padding:20px 18px calc(var(--sb) + 80px)}
-.tap-zone{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:190px;border:1.5px dashed rgba(0,230,118,.18);border-radius:22px;background:var(--gb);margin-bottom:18px;padding:28px 20px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
-.tap-zone::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(0,230,118,.07) 0%,transparent 65%);pointer-events:none}
-.tap-zone.ready{border-color:rgba(0,230,118,.45);background:rgba(0,230,118,.055)}
-.tap-zone:active{transform:scale(.975)}
-.tz-ic{font-size:42px;margin-bottom:10px;line-height:1}
-.tz-t{font-size:16px;font-weight:700;margin-bottom:5px}
-.tz-s{font-size:13px;color:var(--t2);text-align:center;line-height:1.55;max-width:230px}
-/* Preview */
-.prev{background:var(--s1);border:1px solid var(--gs);border-radius:var(--r);padding:15px;display:flex;align-items:center;gap:13px;margin-bottom:14px;animation:rise .25s cubic-bezier(.34,1.4,.64,1) both}
-@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-.prev-av{width:48px;height:48px;border-radius:50%;background:var(--s2);border:2px solid var(--g);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:var(--g);flex-shrink:0;box-shadow:0 0 14px rgba(0,230,118,.2)}
+html{height:100%;background:#0a0a0a}
+button{font-family:'DM Mono',monospace;cursor:pointer;border:none;background:none;color:inherit;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+input,textarea{font-family:'DM Mono',monospace;font-size:16px;color:#f0f0f0;-webkit-tap-highlight-color:transparent}
+
+/* ── VARS ── */
+:root{
+  --bg:#0a0a0a;
+  --surface:#141414;
+  --surface2:#1c1c1c;
+  --border:#2a2a2a;
+  --accent:#e8ff47;
+  --accent2:#ff6b35;
+  --service:#22c55e;
+  --text:#f0f0f0;
+  --muted:#555;
+  --danger:#ff4455;
+}
+
+/* ── SLIDE ROOT ── */
+#slide-root{
+  display:flex;
+  width:200%;
+  height:100%;
+  transition:transform .3s cubic-bezier(.4,0,.2,1);
+  will-change:transform;
+}
+.panel{
+  width:50%;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+
+/* ── HEADER ── */
+header{
+  flex-shrink:0;
+  display:flex;
+  align-items:center;
+  padding:14px 16px 12px;
+  border-bottom:1px solid var(--border);
+  gap:10px;
+  position:relative;
+}
+.logo-wrap{flex:1;min-width:0}
+.logo-title{
+  font-family:'Syne',sans-serif;
+  font-weight:800;
+  font-size:20px;
+  color:var(--accent);
+  line-height:1.1;
+  white-space:nowrap;
+}
+.logo-title span{color:#b8b8b8}
+.logo-sub{
+  font-family:'DM Mono',monospace;
+  font-size:8.5px;
+  color:rgba(255,255,255,.5);
+  text-transform:uppercase;
+  letter-spacing:.1em;
+  margin-top:2px;
+}
+.hbtns{display:flex;gap:8px;flex-shrink:0}
+.hbtn{
+  width:36px;height:36px;
+  border-radius:9px;
+  border:1px solid var(--border);
+  background:var(--surface2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;
+  transition:transform .1s,border-color .15s;
+  touch-action:manipulation;
+}
+.hbtn:active{transform:scale(.88)}
+.hbtn.on{border-color:var(--accent);color:var(--accent)}
+.back-btn{
+  width:36px;height:36px;
+  border-radius:9px;
+  border:1px solid var(--border);
+  background:var(--surface2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;
+  touch-action:manipulation;
+  transition:transform .1s;
+}
+.back-btn:active{transform:scale(.88)}
+
+/* Panel dots */
+.panel-dots{
+  position:absolute;
+  bottom:-11px;left:50%;
+  transform:translateX(-50%);
+  display:flex;gap:6px;
+  z-index:5;
+}
+.dot{
+  width:5px;height:5px;border-radius:50%;
+  background:var(--muted);
+  transition:background .2s,transform .2s;
+}
+.dot.on{background:var(--accent);transform:scale(1.35)}
+
+/* ── SEARCH BAR ── */
+.search-bar{
+  flex-shrink:0;
+  padding:10px 16px;
+  border-bottom:1px solid var(--border);
+  display:none;
+}
+.search-bar.open{display:block}
+.search-input{
+  width:100%;
+  padding:10px 14px;
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:12px;
+  color:#f0f0f0;
+  font-size:16px;
+  outline:none;
+  transition:border-color .2s;
+}
+.search-input:focus{border-color:var(--accent)}
+.search-input::placeholder{color:var(--muted)}
+
+/* ── PANEL MAIN ── */
+.panel-main{
+  flex:1;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  padding:12px 16px;
+}
+.panel-main::-webkit-scrollbar{display:none}
+
+/* ── SECTION ── */
+.section-label{
+  font-family:'Syne',sans-serif;
+  font-weight:800;
+  font-size:10px;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:.12em;
+  padding:14px 0 7px;
+}
+
+/* ── ACCOUNT CARD ── */
+.acc-card{
+  width:100%;
+  min-height:80px;
+  padding:16px 18px;
+  border-radius:18px;
+  border:1px solid var(--border);
+  background:var(--surface);
+  display:flex;align-items:center;gap:13px;
+  margin-bottom:8px;
+  position:relative;
+  overflow:hidden;
+  text-align:left;
+  transition:transform .1s;
+  touch-action:manipulation;
+}
+.acc-card:active{transform:scale(.97)}
+
+/* Confirm flash */
+.acc-card::after{
+  content:attr(data-confirm);
+  position:absolute;inset:0;
+  background:var(--accent);
+  color:#000;
+  font-family:'Syne',sans-serif;
+  font-weight:800;
+  font-size:15px;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:18px;
+  opacity:0;
+  pointer-events:none;
+}
+.acc-card.flash::after{
+  animation:cfade .9s ease forwards;
+  animation-delay:.5s;
+}
+@keyframes cfade{0%{opacity:1}100%{opacity:0}}
+/* flash trigger */
+.acc-card.flash-start::after{opacity:1;animation:none}
+
+.card-av{
+  width:44px;height:44px;border-radius:50%;
+  background:var(--surface2);
+  border:1.5px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;font-weight:800;
+  font-family:'Syne',sans-serif;
+  color:var(--accent);
+  flex-shrink:0;
+}
+.card-body{flex:1;min-width:0}
+.card-name{
+  font-family:'Syne',sans-serif;
+  font-weight:700;
+  font-size:15px;
+  color:var(--text);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.card-preview{
+  font-size:10px;
+  color:var(--muted);
+  margin-top:3px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  display:flex;align-items:center;gap:6px;
+}
+.card-arrow{
+  color:rgba(255,255,255,.2);
+  font-size:18px;
+  flex-shrink:0;
+}
+.pill-b2b{
+  background:rgba(34,197,94,.12);
+  color:var(--service);
+  font-size:9px;font-weight:500;
+  padding:2px 7px;border-radius:6px;
+  white-space:nowrap;
+}
+.pill-status{
+  font-size:9px;font-weight:500;
+  padding:2px 7px;border-radius:6px;
+  white-space:nowrap;
+}
+.pill-prospect{background:rgba(232,255,71,.08);color:var(--accent)}
+.pill-active{background:rgba(255,107,53,.1);color:var(--accent2)}
+.pill-done{background:rgba(34,197,94,.1);color:var(--service)}
+
+/* Edit overlay */
+.edit-overlay{
+  position:absolute;inset:0;
+  background:rgba(6,6,6,.88);
+  border-radius:18px;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  opacity:0;pointer-events:none;
+  transition:opacity .15s;
+}
+.edit-overlay.on{opacity:1;pointer-events:all}
+.eo-btn{
+  padding:8px 16px;
+  border-radius:12px;
+  font-size:12px;font-weight:500;
+  border:1px solid var(--border);
+  background:var(--surface2);
+  transition:transform .1s;
+  touch-action:manipulation;
+}
+.eo-btn:active{transform:scale(.9)}
+.eo-edit{color:var(--accent);border-color:rgba(232,255,71,.25)}
+.eo-del{color:var(--danger);border-color:rgba(255,68,85,.25)}
+
+/* ── EDIT BANNER ── */
+.edit-banner{
+  flex-shrink:0;
+  display:none;
+  align-items:center;justify-content:space-between;
+  padding:10px 16px;
+  background:rgba(255,107,53,.07);
+  border-bottom:1px solid rgba(255,107,53,.15);
+}
+.edit-banner.on{display:flex}
+.eb-text{font-size:11px;color:var(--accent2)}
+.eb-done{
+  padding:6px 14px;
+  border-radius:9px;
+  background:var(--accent2);
+  color:#000;
+  font-family:'Syne',sans-serif;
+  font-weight:800;
+  font-size:12px;
+  touch-action:manipulation;
+  transition:transform .1s;
+}
+.eb-done:active{transform:scale(.92)}
+
+/* ── EMPTY STATE ── */
+.empty{
+  display:flex;flex-direction:column;align-items:center;
+  padding:60px 30px;gap:10px;text-align:center;
+}
+.em-ic{font-size:40px;opacity:.2}
+.em-t{font-family:'Syne',sans-serif;font-weight:800;font-size:15px;color:rgba(255,255,255,.3)}
+.em-s{font-size:12px;color:var(--muted);line-height:1.6}
+
+/* ── ADD PANEL ── */
+#p-add .panel-main{padding:16px}
+.add-section-title{
+  font-family:'Syne',sans-serif;font-weight:800;font-size:13px;
+  color:rgba(255,255,255,.6);margin-bottom:12px;
+}
+
+/* Big tap zone */
+.tap-zone{
+  border:1.5px dashed rgba(232,255,71,.2);
+  border-radius:18px;
+  background:rgba(232,255,71,.03);
+  padding:28px 20px;
+  display:flex;flex-direction:column;align-items:center;
+  text-align:center;gap:8px;
+  margin-bottom:16px;
+  cursor:pointer;
+  transition:all .18s;
+  touch-action:manipulation;
+}
+.tap-zone:active{transform:scale(.98);background:rgba(232,255,71,.06)}
+.tap-zone.ready{border-color:rgba(232,255,71,.5);background:rgba(232,255,71,.05)}
+.tz-ic{font-size:36px;line-height:1}
+.tz-t{font-family:'Syne',sans-serif;font-weight:800;font-size:15px;color:var(--text)}
+.tz-s{font-size:11px;color:var(--muted);line-height:1.55;max-width:220px}
+
+/* Preview card */
+.preview-card{
+  background:var(--surface);
+  border:1px solid rgba(232,255,71,.2);
+  border-radius:18px;
+  padding:14px 16px;
+  display:flex;align-items:center;gap:12px;
+  margin-bottom:12px;
+  animation:rise .22s cubic-bezier(.34,1.4,.64,1) both;
+}
+@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.prev-av{
+  width:44px;height:44px;border-radius:50%;
+  background:var(--surface2);
+  border:1.5px solid var(--accent);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Syne',sans-serif;font-weight:800;font-size:16px;color:var(--accent);
+  flex-shrink:0;
+}
 .prev-info{flex:1;min-width:0}
-.prev-name{font-size:15px;font-weight:700}
-.prev-url{font-size:12px;color:var(--t2);margin-top:2px}
-.prev-ok{width:26px;height:26px;border-radius:50%;background:var(--gs);border:1.5px solid var(--g);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.prev-name{font-family:'Syne',sans-serif;font-weight:800;font-size:14px;color:var(--text)}
+.prev-url{font-size:10px;color:var(--muted);margin-top:2px}
+.prev-ok{font-size:18px;flex-shrink:0}
+
 /* Fields */
-.nf{background:var(--s1);border:1px solid var(--ln);border-radius:var(--r);padding:13px 15px;margin-bottom:12px;display:flex;align-items:flex-start;gap:10px;transition:border-color .2s}
-.nf:focus-within{border-color:rgba(0,230,118,.3)}
-.nf-ic{font-size:15px;margin-top:2px;flex-shrink:0}
-textarea#inp-note{flex:1;background:none;border:none;outline:none;color:var(--t1);font-size:14px;font-family:inherit;resize:none;min-height:56px;line-height:1.5}
-textarea#inp-note::placeholder{color:var(--t3)}
-.b2b-row{background:var(--s1);border:1px solid var(--ln);border-radius:var(--r);padding:14px 15px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between}
-.b2b-l{font-size:14px;font-weight:600}
-.b2b-s{font-size:12px;color:var(--t2);margin-top:2px}
-.tog{width:50px;height:30px;border-radius:15px;background:var(--s3);border:none;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0}
-.tog.on{background:var(--g)}
-.tok{position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:transform .22s cubic-bezier(.34,1.5,.64,1);box-shadow:0 2px 6px rgba(0,0,0,.35)}
-.tog.on .tok{transform:translateX(20px)}
-.btn-add{width:100%;padding:16px;background:var(--g);color:#000;font-size:16px;font-weight:800;font-family:inherit;border:none;border-radius:var(--r);cursor:pointer;transition:opacity .15s,transform .1s;letter-spacing:-.1px}
-.btn-add:active{opacity:.85;transform:scale(.985)}
-.btn-add:disabled{opacity:.22;pointer-events:none}
-/* LIST PAGE */
-#p-list{padding-bottom:calc(var(--sb) + 16px)}
-.sec-hdr{padding:20px 20px 6px;font-size:10px;font-weight:900;color:var(--t3);text-transform:uppercase;letter-spacing:.8px}
-/* Row */
-.rw{position:relative;overflow:hidden}
-.sw-bg{position:absolute;right:0;top:0;bottom:0;display:flex;align-items:stretch}
-.sw-b{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 14px;gap:3px;border:none;cursor:pointer;font-size:10px;font-weight:900;color:#fff;width:72px;text-transform:uppercase;letter-spacing:.2px}
-.sw-b .si{font-size:18px;line-height:1;margin-bottom:1px}
-.sw-b2b{background:var(--purple)}
-.sw-nt{background:var(--blue)}
-.sw-dl{background:var(--red)}
-.ar{display:flex;align-items:center;padding:13px 20px;gap:13px;background:#000;border-bottom:1px solid var(--ln);position:relative;z-index:2;min-height:68px;will-change:transform;cursor:pointer;user-select:none}
-.ar.ani{animation:rin .26s cubic-bezier(.34,1.3,.64,1) both}
-@keyframes rin{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:none}}
-.av{width:46px;height:46px;border-radius:50%;background:var(--s2);border:1.5px solid var(--ln);display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800;color:var(--t1);flex-shrink:0;position:relative;transition:border-color .2s,box-shadow .2s}
-.av.gn{border-color:rgba(0,230,118,.5);box-shadow:0 0 12px rgba(0,230,118,.2)}
-.av.bv{border-color:rgba(191,90,242,.45)}
-.av.act .av-ring{opacity:1}
-.av-ring{position:absolute;inset:-3px;border-radius:50%;border:1.5px solid var(--yellow);opacity:0;animation:spin 4s linear infinite;transition:opacity .3s}
-.ri{flex:1;min-width:0}
-.rn{font-size:15px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.rs{font-size:12px;color:var(--t2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.rr{flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:4px}
-.pill{font-size:10px;font-weight:800;padding:3px 9px;border-radius:10px;white-space:nowrap}
-.pp{background:rgba(255,255,255,.05);color:var(--t3)}
-.pa{background:rgba(255,214,10,.1);color:var(--yellow)}
-.pd{background:rgba(0,230,118,.1);color:var(--g)}
-.pb{background:rgba(191,90,242,.12);color:var(--purple)}
-/* Empty */
-.empty{display:flex;flex-direction:column;align-items:center;padding:90px 40px;gap:9px;text-align:center}
-.em-ic{font-size:44px;opacity:.12;margin-bottom:4px}
-.em-t{font-size:15px;font-weight:700;color:var(--t2)}
-.em-s{font-size:13px;color:var(--t3);line-height:1.6}
-/* SHEETS */
-.ov{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);z-index:60;opacity:0;pointer-events:none;transition:opacity .22s}
-.ov.on{opacity:1;pointer-events:all}
-.sh{position:fixed;bottom:0;left:0;right:0;background:#0f0f0f;border-radius:22px 22px 0 0;border-top:1px solid var(--ln);padding:10px 20px calc(var(--sb) + 18px);z-index:61;transform:translateY(100%);transition:transform .32s cubic-bezier(.32,1.18,.64,1);max-height:88dvh;overflow-y:auto}
-.sh.on{transform:none}
-.sh-handle{width:36px;height:4px;background:var(--s3);border-radius:2px;margin:0 auto 18px}
-.sh-title{font-size:18px;font-weight:800;margin-bottom:16px;letter-spacing:-.3px}
-.note-ta{width:100%;min-height:100px;padding:13px 15px;background:var(--s2);border:1px solid var(--ln);border-radius:var(--r);color:var(--t1);font-size:15px;font-family:inherit;outline:none;resize:none;-webkit-appearance:none;transition:border-color .2s}
-.note-ta:focus{border-color:rgba(0,230,118,.35)}
-.note-ta::placeholder{color:var(--t3)}
-.sh-row{display:flex;gap:10px;margin-top:13px}
-.sh-c{flex:1;padding:15px;border-radius:var(--r);border:none;background:var(--s3);color:var(--t2);font-size:15px;font-weight:700;font-family:inherit;cursor:pointer}
-.sh-s{flex:2;padding:15px;border-radius:var(--r);border:none;background:var(--g);color:#000;font-size:15px;font-weight:800;font-family:inherit;cursor:pointer}
-/* Confirm sheet */
-.cf-av{width:64px;height:64px;border-radius:50%;background:var(--s2);border:2px solid var(--yellow);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;margin:0 auto 12px;box-shadow:0 0 20px rgba(255,214,10,.15);animation:spin 4s linear infinite}
-.cf-name{text-align:center;font-size:18px;font-weight:800;margin-bottom:4px}
-.cf-meta{text-align:center;font-size:13px;color:var(--t2);margin-bottom:20px}
-.btn-done{width:100%;padding:15px;border-radius:var(--r);border:none;background:var(--g);color:#000;font-size:15px;font-weight:800;font-family:inherit;cursor:pointer;margin-bottom:9px}
-.btn-rst{width:100%;padding:13px;border-radius:var(--r);border:none;background:var(--s3);color:var(--t2);font-size:14px;font-weight:700;font-family:inherit;cursor:pointer}
-/* TOAST */
-#toast{position:fixed;top:calc(var(--st) + 10px);left:50%;transform:translateX(-50%) translateY(-90px);background:rgba(15,15,15,.97);border:1px solid rgba(255,255,255,.08);color:#fff;padding:10px 18px;border-radius:22px;font-size:14px;font-weight:700;z-index:200;transition:transform .3s cubic-bezier(.34,1.4,.64,1);white-space:nowrap;pointer-events:none;display:flex;align-items:center;gap:7px;box-shadow:0 8px 32px rgba(0,0,0,.5)}
+.field{margin-bottom:10px}
+.field-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px}
+.field-input{
+  width:100%;padding:12px 14px;
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:12px;
+  color:#f0f0f0;font-size:16px;
+  outline:none;
+  transition:border-color .2s;
+  -webkit-appearance:none;
+}
+.field-input:focus{border-color:var(--accent)}
+.field-input::placeholder{color:var(--muted)}
+textarea.field-input{resize:none;min-height:70px;line-height:1.5}
+
+/* B2B toggle row */
+.b2b-row{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:12px 14px;
+  margin-bottom:10px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.b2b-info{}
+.b2b-label{font-family:'Syne',sans-serif;font-weight:800;font-size:13px}
+.b2b-sub{font-size:10px;color:var(--muted);margin-top:2px}
+.tog{
+  width:48px;height:28px;border-radius:14px;
+  background:var(--surface2);border:1px solid var(--border);
+  position:relative;cursor:pointer;transition:background .2s,border-color .2s;
+  flex-shrink:0;touch-action:manipulation;
+}
+.tog.on{background:var(--accent);border-color:var(--accent)}
+.tok{
+  position:absolute;top:3px;left:3px;
+  width:22px;height:22px;border-radius:50%;
+  background:#888;
+  transition:transform .22s cubic-bezier(.34,1.5,.64,1),background .2s;
+  box-shadow:0 1px 4px rgba(0,0,0,.4);
+}
+.tog.on .tok{transform:translateX(20px);background:#000}
+
+/* Main add button */
+.btn-main{
+  width:100%;padding:16px;
+  border-radius:18px;
+  background:var(--accent);
+  color:#000;
+  font-family:'Syne',sans-serif;font-weight:800;font-size:16px;
+  border:none;cursor:pointer;
+  transition:opacity .15s,transform .1s;
+  touch-action:manipulation;margin-top:4px;
+}
+.btn-main:active{opacity:.85;transform:scale(.98)}
+.btn-main:disabled{opacity:.2;pointer-events:none}
+
+/* ── DETAIL PANEL ── */
+#p-detail .panel-main{padding:0}
+.detail-hero{
+  padding:24px 20px 16px;
+  display:flex;align-items:center;gap:14px;
+  border-bottom:1px solid var(--border);
+}
+.detail-av{
+  width:58px;height:58px;border-radius:50%;
+  background:var(--surface2);
+  border:2px solid var(--accent);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Syne',sans-serif;font-weight:800;font-size:22px;color:var(--accent);
+  flex-shrink:0;
+}
+.detail-info{flex:1;min-width:0}
+.detail-name{font-family:'Syne',sans-serif;font-weight:800;font-size:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.detail-url{font-size:11px;color:var(--muted);margin-top:3px}
+.detail-pills{display:flex;gap:5px;margin-top:6px;flex-wrap:wrap}
+
+.detail-section{padding:16px 20px;border-bottom:1px solid var(--border)}
+.detail-section-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
+
+/* Status buttons */
+.status-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.status-btn{
+  padding:12px 6px;border-radius:12px;
+  border:1px solid var(--border);
+  background:var(--surface2);
+  font-family:'DM Mono',monospace;
+  font-size:11px;color:var(--muted);
+  display:flex;flex-direction:column;align-items:center;gap:5px;
+  transition:all .15s;touch-action:manipulation;
+}
+.status-btn .sb-ic{font-size:18px}
+.status-btn:active{transform:scale(.94)}
+.status-btn.on-prospect{border-color:rgba(232,255,71,.4);background:rgba(232,255,71,.06);color:var(--accent)}
+.status-btn.on-active{border-color:rgba(255,107,53,.4);background:rgba(255,107,53,.06);color:var(--accent2)}
+.status-btn.on-done{border-color:rgba(34,197,94,.4);background:rgba(34,197,94,.06);color:var(--service)}
+
+/* Note display */
+.note-box{
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:12px 14px;
+  font-size:13px;color:rgba(255,255,255,.7);
+  line-height:1.6;min-height:50px;
+  cursor:pointer;transition:border-color .2s;
+}
+.note-box:active{border-color:var(--accent)}
+.note-box.empty-note{color:var(--muted);font-style:italic}
+
+/* Action buttons */
+.action-row{display:flex;gap:8px;padding:16px 20px}
+.action-btn{
+  flex:1;padding:14px;border-radius:12px;
+  border:1px solid var(--border);
+  font-family:'Syne',sans-serif;font-weight:800;font-size:13px;
+  transition:transform .1s;touch-action:manipulation;
+}
+.action-btn:active{transform:scale(.95)}
+.ab-ig{background:rgba(225,48,108,.1);color:#e1306c;border-color:rgba(225,48,108,.2)}
+.ab-del{background:rgba(255,68,85,.07);color:var(--danger);border-color:rgba(255,68,85,.15)}
+
+/* Active badge */
+.active-bar{
+  background:rgba(255,107,53,.06);
+  border-bottom:1px solid rgba(255,107,53,.12);
+  padding:10px 20px;
+  display:flex;align-items:center;gap:8px;
+  font-size:11px;color:var(--accent2);
+}
+.active-pulse{width:7px;height:7px;border-radius:50%;background:var(--accent2);animation:blink 1.6s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+
+/* ── MODAL ── */
+.modal-bg{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.45);
+  backdrop-filter:blur(20px) saturate(1.8);
+  -webkit-backdrop-filter:blur(20px) saturate(1.8);
+  z-index:80;
+  opacity:0;pointer-events:none;
+  transition:opacity .22s;
+}
+.modal-bg.on{opacity:1;pointer-events:all}
+.modal{
+  position:fixed;bottom:0;left:0;right:0;
+  background:rgba(20,20,20,.82);
+  backdrop-filter:blur(24px) saturate(2);
+  -webkit-backdrop-filter:blur(24px) saturate(2);
+  border-radius:26px 26px 0 0;
+  border-top:1px solid rgba(255,255,255,.1);
+  padding:0 20px calc(env(safe-area-inset-bottom) + 20px);
+  z-index:81;
+  transform:translateY(100%);
+  transition:transform .28s cubic-bezier(.33,1,.68,1);
+  max-height:85vh;overflow-y:auto;
+}
+.modal-bg.on .modal{transform:none}
+.modal-handle{width:36px;height:4px;background:rgba(255,255,255,.12);border-radius:2px;margin:10px auto 16px}
+.modal-title{font-family:'Syne',sans-serif;font-weight:800;font-size:18px;margin-bottom:16px;color:var(--text)}
+.modal-field{margin-bottom:12px}
+.modal-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px}
+.modal-input{
+  width:100%;padding:12px 14px;
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:12px;
+  color:#f0f0f0;font-size:16px;
+  outline:none;-webkit-appearance:none;
+  transition:border-color .2s;
+}
+.modal-input:focus{border-color:var(--accent)}
+.modal-input::placeholder{color:var(--muted)}
+textarea.modal-input{resize:none;min-height:80px;line-height:1.5}
+.modal-actions{display:flex;gap:10px;margin-top:16px}
+.m-cancel{
+  flex:1;padding:14px;border-radius:12px;
+  border:1px solid var(--border);background:var(--surface2);
+  color:var(--muted);font-family:'Syne',sans-serif;font-weight:800;font-size:14px;
+  touch-action:manipulation;transition:transform .1s;
+}
+.m-cancel:active{transform:scale(.95)}
+.m-save{
+  flex:2;padding:14px;border-radius:12px;
+  border:none;background:var(--accent);
+  color:#000;font-family:'Syne',sans-serif;font-weight:800;font-size:14px;
+  touch-action:manipulation;transition:transform .1s,opacity .1s;
+}
+.m-save:active{transform:scale(.97);opacity:.85}
+
+/* ── FOOTER ── */
+footer{
+  flex-shrink:0;
+  padding:10px 16px;
+  border-top:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  cursor:pointer;
+  touch-action:manipulation;
+}
+.footer-text{font-size:9px;color:rgba(255,255,255,.32)}
+.footer-hint{font-size:9px;color:rgba(255,255,255,.25)}
+
+/* ── TOAST ── */
+#toast{
+  position:fixed;
+  top:calc(env(safe-area-inset-top) + 12px);
+  left:50%;transform:translateX(-50%) translateY(-100px);
+  background:rgba(15,15,15,.97);
+  border:1px solid var(--border);
+  color:#fff;padding:10px 18px;
+  border-radius:20px;font-size:13px;font-weight:500;
+  z-index:200;white-space:nowrap;pointer-events:none;
+  transition:transform .28s cubic-bezier(.34,1.4,.64,1);
+  display:flex;align-items:center;gap:7px;
+  box-shadow:0 8px 32px rgba(0,0,0,.5);
+}
 #toast.show{transform:translateX(-50%) translateY(0)}
+
+/* ── SWIPE HINT ── */
+.swipe-hint{
+  text-align:center;padding:20px 0 0;
+  font-size:10px;color:var(--muted);
+}
 </style>
 </head>
 <body>
-<div id="app">
-  <div id="hdr">
-    <div class="hdr-inner">
-      <div class="logo"><div class="logo-dot"></div><div class="logo-text">Prospect</div></div>
-      <button id="fab" onclick="fabTap()" aria-label="Ajouter depuis presse-papier">
-        <div class="fab-ring"></div>
-        <svg viewBox="0 0 24 24"><path d="M19 11h-6V5h-2v6H5v2h6v6h2v-6h6z"/></svg>
-      </button>
+<div id="slide-root">
+
+  <!-- ══ PANEL 0 — LIST ══ -->
+  <div class="panel" id="p-list">
+    <header>
+      <div class="logo-wrap">
+        <div class="logo-title">Bobby San <span>B2B</span></div>
+        <div class="logo-sub">Prospection Instagram</div>
+      </div>
+      <div class="hbtns">
+        <button class="hbtn" id="btn-edit" onclick="toggleEdit()" title="Éditer">✏️</button>
+        <button class="hbtn" id="btn-add-go" onclick="goPanel(1)" title="Ajouter">＋</button>
+      </div>
+      <div class="panel-dots">
+        <div class="dot on" id="dot0"></div>
+        <div class="dot" id="dot1"></div>
+      </div>
+    </header>
+
+    <div class="edit-banner" id="edit-banner">
+      <span class="eb-text">Mode édition — appuyez sur une fiche</span>
+      <button class="eb-done" onclick="toggleEdit()">Terminé</button>
     </div>
-    <div class="nav">
-      <button class="nb on" data-p="add" onclick="go('add',this)">Ajouter</button>
-      <button class="nb" data-p="list" onclick="go('list',this)">Liste <span class="nbadge" id="nb">0</span></button>
+
+    <div class="search-bar" id="search-bar-list">
+      <input class="search-input" id="search-input" placeholder="Rechercher un compte…" oninput="renderList()" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false">
     </div>
+
+    <div class="panel-main" id="list-main">
+      <!-- rendered by JS -->
+    </div>
+
+    <footer ondblclick="toggleSearch()">
+      <span class="footer-text" id="list-footer-text">0 comptes</span>
+      <span class="footer-hint">[2×] recherche</span>
+    </footer>
   </div>
-  <div id="pages">
-    <div class="page active" id="p-add">
+
+  <!-- ══ PANEL 1 — ADD ══ -->
+  <div class="panel" id="p-add">
+    <header>
+      <button class="back-btn" onclick="goPanel(0)">‹</button>
+      <div class="logo-wrap">
+        <div class="logo-title">Ajouter</div>
+        <div class="logo-sub">Coller un lien Instagram</div>
+      </div>
+      <div class="panel-dots">
+        <div class="dot" id="dot2"></div>
+        <div class="dot on" id="dot3"></div>
+      </div>
+    </header>
+
+    <div class="panel-main">
+      <!-- Big tap zone -->
       <div id="tap-zone" class="tap-zone" onclick="tzTap()">
         <div class="tz-ic" id="tz-ic">📋</div>
-        <div class="tz-t" id="tz-t">Appuyer pour ajouter</div>
-        <div class="tz-s" id="tz-s">Copie un lien Instagram puis appuie ici — ou utilise le bouton + en haut</div>
+        <div class="tz-t" id="tz-t">Appuyer pour coller</div>
+        <div class="tz-s" id="tz-s">Copie un lien Instagram puis appuie ici</div>
       </div>
-      <div id="prev-wrap"></div>
-      <div class="nf" id="note-f" style="display:none"><div class="nf-ic">📝</div><textarea id="inp-note" placeholder="Notes — ex: 12K abonnés, photographe, DM ouvert…" rows="2"></textarea></div>
-      <div class="b2b-row" id="b2b-f" style="display:none">
-        <div><div class="b2b-l">Compte B2B 🏢</div><div class="b2b-s">Entreprise ou professionnel</div></div>
-        <button class="tog" id="b2b-tog" onclick="togB2B()"><div class="tok"></div></button>
+
+      <div id="add-fields" style="display:none">
+        <div id="prev-wrap"></div>
+
+        <div class="field">
+          <div class="field-label">Notes</div>
+          <textarea id="inp-note" class="field-input" placeholder="10K abonnés, DM ouvert, photographe…" rows="3"></textarea>
+        </div>
+
+        <div class="b2b-row">
+          <div class="b2b-info">
+            <div class="b2b-label">Compte B2B 🏢</div>
+            <div class="b2b-sub">Entreprise ou professionnel</div>
+          </div>
+          <button class="tog" id="b2b-tog" onclick="togB2B()"><div class="tok"></div></button>
+        </div>
+
+        <button class="btn-main" id="btn-confirm" onclick="doAdd()">Ajouter à la liste</button>
       </div>
-      <button class="btn-add" id="btn-add" onclick="doAdd()" disabled>Ajouter à la liste</button>
+
+      <div class="swipe-hint">← Glisser pour revenir</div>
     </div>
-    <div class="page" id="p-list"><div id="list-body"></div></div>
+
+    <footer ondblclick="goPanel(0)">
+      <span class="footer-text">Nouveau compte</span>
+      <span class="footer-hint">[2×] retour</span>
+    </footer>
+  </div>
+
+</div>
+
+<!-- ══ DETAIL PANEL (overlay) ══ -->
+<div id="detail-overlay" style="position:fixed;inset:0;z-index:40;background:#0a0a0a;transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)">
+  <header>
+    <button class="back-btn" onclick="closeDetail()">‹</button>
+    <div class="logo-wrap">
+      <div class="logo-title" id="detail-title">Profil</div>
+      <div class="logo-sub">Détail du compte</div>
+    </div>
+    <div class="hbtns">
+      <button class="hbtn ab-ig" id="detail-ig-btn" onclick="openIG()" style="font-size:13px;font-family:'Syne',sans-serif;font-weight:800;width:auto;padding:0 12px">IG ↗</button>
+    </div>
+  </header>
+  <div style="flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch" id="detail-body"></div>
+  <footer>
+    <span class="footer-text" id="detail-footer"></span>
+    <span class="footer-hint"></span>
+  </footer>
+</div>
+
+<!-- ══ MODAL (edit) ══ -->
+<div class="modal-bg" id="modal-bg" onclick="closeModal(event)">
+  <div class="modal" id="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="modal-title">Modifier</div>
+    <div class="modal-field">
+      <div class="modal-label">Notes</div>
+      <textarea class="modal-input" id="m-note" placeholder="Ex: 12K abonnés, DM ouvert…"></textarea>
+    </div>
+    <div class="modal-field" id="m-b2b-row">
+      <div class="b2b-row" style="margin:0">
+        <div class="b2b-info">
+          <div class="b2b-label">Compte B2B 🏢</div>
+          <div class="b2b-sub">Entreprise ou professionnel</div>
+        </div>
+        <button class="tog" id="m-b2b-tog" onclick="togModalB2B()"><div class="tok"></div></button>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="m-cancel" onclick="closeModal()">Annuler</button>
+      <button class="m-save" onclick="saveModal()">Enregistrer</button>
+    </div>
   </div>
 </div>
-<!-- Note sheet -->
-<div class="ov" id="note-ov" onclick="closeNote()"></div>
-<div class="sh" id="note-sh">
-  <div class="sh-handle"></div>
-  <div class="sh-title">📝 Note</div>
-  <textarea class="note-ta" id="note-ta" placeholder="Ex: 12K abonnés, DM ouvert, intéressé…"></textarea>
-  <div class="sh-row"><button class="sh-c" onclick="closeNote()">Annuler</button><button class="sh-s" onclick="saveNote()">Enregistrer</button></div>
-</div>
-<!-- Confirm sheet -->
-<div class="ov" id="cf-ov" onclick="closeCf()"></div>
-<div class="sh" id="cf-sh">
-  <div class="sh-handle"></div>
-  <div class="cf-av" id="cf-av">?</div>
-  <div class="cf-name" id="cf-name">@username</div>
-  <div class="cf-meta" id="cf-meta">Prospection en cours</div>
-  <button class="btn-done" onclick="markDone()">✅ Prospection terminée</button>
-  <button class="btn-rst" onclick="resetP()">↩ Remettre à prospecter</button>
-</div>
+
 <div id="toast"><span id="t-ic">✓</span><span id="t-msg">OK</span></div>
+
 <script>
-let DB=JSON.parse(localStorage.getItem('igp5')||'[]');
-const save=()=>localStorage.setItem('igp5',JSON.stringify(DB));
-const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
-let addSt={u:null,url:null,b2b:false};
-let noteId=null,cfId=null,swId=null,lastClip='',clipCache=null;
+/* ════════════════════════════════
+   DATA
+════════════════════════════════ */
+let DB = JSON.parse(localStorage.getItem('bsb1') || '[]');
+const save = () => localStorage.setItem('bsb1', JSON.stringify(DB));
+const uid  = () => Date.now().toString(36) + Math.random().toString(36).slice(2,6);
 
-function exIG(s){if(!s)return null;s=s.trim();const m=s.match(/instagram.com/([a-zA-Z0-9._]{1,30})/i);if(m)return m[1].replace(//$/,’’).toLowerCase();return null}
-function isIG(s){return /instagram.com//i.test(s||’’)}
-function igUrl(u){return’https://instagram.com/’+u}
-function ini(u){return(u||’?’)[0].toUpperCase()}
+let editMode  = false;
+let addState  = { u: null, url: null, b2b: false };
+let clipCache = null;
+let modalId   = null;
+let detailId  = null;
+let modalB2B  = false;
+let curPanel  = 0;
 
-// CLIPBOARD
-async function readClip(){try{if(!navigator.clipboard?.readText)return null;return await navigator.clipboard.readText()}catch{return null}}
-async function prefetch(){
-const txt=await readClip();clipCache=txt;
-if(txt&&isIG(txt)){const u=exIG(txt);if(u){document.getElementById(‘fab’).classList.add(‘has-ig’);setTZ(u);return}}
-document.getElementById(‘fab’).classList.remove(‘has-ig’);
-if(!addSt.u)resetTZ();
+/* ════════════════════════════════
+   HELPERS
+════════════════════════════════ */
+function exIG(s) {
+  if (!s) return null;
+  s = s.trim();
+  const m = s.match(/instagram\.com\/([a-zA-Z0-9._]{1,30})/i);
+  if (m) return m[1].replace(/\/$/, '').toLowerCase();
+  return null;
 }
-document.addEventListener(‘visibilitychange’,()=>{if(!document.hidden)prefetch()});
-window.addEventListener(‘focus’,prefetch);
+function isIG(s) { return /instagram\.com\//i.test(s || ''); }
+function igUrl(u) { return 'https://instagram.com/' + u; }
+function ini(u)   { return (u || '?')[0].toUpperCase(); }
 
-function setTZ(u){document.getElementById(‘tz-ic’).textContent=‘✨’;document.getElementById(‘tz-t’).textContent=’@’+u+’ détecté’;document.getElementById(‘tz-s’).textContent=‘Appuie pour ajouter instantanément’;document.getElementById(‘tap-zone’).classList.add(‘ready’)}
-function resetTZ(){document.getElementById(‘tz-ic’).textContent=‘📋’;document.getElementById(‘tz-t’).textContent=‘Appuyer pour ajouter’;document.getElementById(‘tz-s’).textContent=‘Copie un lien Instagram puis appuie ici — ou utilise le bouton + en haut’;document.getElementById(‘tap-zone’).classList.remove(‘ready’)}
-
-// FAB — instant add
-async function fabTap(){
-const fab=document.getElementById(‘fab’);
-fab.classList.add(‘pop’);setTimeout(()=>fab.classList.remove(‘pop’),350);
-const txt=clipCache||await readClip();clipCache=null;
-if(!txt||!isIG(txt)){toast(‘📋’,‘Aucun lien Instagram copié’);return}
-const u=exIG(txt);if(!u){toast(‘⚠️’,‘Lien invalide’);return}
-if(DB.find(a=>a.username===u)){toast(‘⚠️’,’@’+u+’ déjà dans la liste’);return}
-DB.unshift({id:uid(),username:u,url:igUrl(u),note:’’,b2b:false,status:‘prospect’,addedAt:Date.now(),activeAt:null});
-save();updBadge();lastClip=txt;
-toast(‘✅’,’@’+u+’ ajouté !’);
-fab.classList.remove(‘has-ig’);resetTZ();
-go(‘list’,document.querySelector(’[data-p=“list”]’));
+/* ════════════════════════════════
+   CLIPBOARD
+════════════════════════════════ */
+async function readClip() {
+  try { return navigator.clipboard?.readText ? await navigator.clipboard.readText() : null; }
+  catch { return null; }
 }
-
-// TAP ZONE — show preview + fields
-async function tzTap(){
-const txt=clipCache||await readClip();clipCache=null;
-if(!txt||!isIG(txt)){toast(‘📋’,‘Aucun lien Instagram copié’);return}
-const u=exIG(txt);if(!u)return;
-if(DB.find(a=>a.username===u)){toast(‘⚠️’,’@’+u+’ déjà dans la liste’);return}
-addSt={u,url:igUrl(u),b2b:false};
-document.getElementById(‘prev-wrap’).innerHTML=`<div class="prev"><div class="prev-av">${ini(u)}</div><div class="prev-info"><div class="prev-name">@${u}</div><div class="prev-url">instagram.com/${u}</div></div><div class="prev-ok">✓</div></div>`;
-document.getElementById(‘note-f’).style.display=‘flex’;
-document.getElementById(‘b2b-f’).style.display=‘flex’;
-document.getElementById(‘btn-add’).disabled=false;
-document.getElementById(‘tap-zone’).style.display=‘none’;
-lastClip=txt;
+async function prefetch() {
+  const txt = await readClip();
+  clipCache = txt;
+  if (txt && isIG(txt)) {
+    const u = exIG(txt);
+    if (u) { setTZ(u); return; }
+  }
+  if (!addState.u) resetTZ();
 }
 
-function togB2B(){addSt.b2b=!addSt.b2b;document.getElementById(‘b2b-tog’).classList.toggle(‘on’,addSt.b2b)}
+document.addEventListener('visibilitychange', () => { if (!document.hidden) prefetch(); });
+window.addEventListener('focus', prefetch);
 
-function doAdd(){
-if(!addSt.u)return;
-const note=document.getElementById(‘inp-note’).value.trim();
-DB.unshift({id:uid(),username:addSt.u,url:addSt.url,note,b2b:addSt.b2b,status:‘prospect’,addedAt:Date.now(),activeAt:null});
-save();updBadge();
-toast(‘✅’,’@’+addSt.u+’ ajouté !’);
-resetAdd();
-go(‘list’,document.querySelector(’[data-p=“list”]’));
+function setTZ(u) {
+  document.getElementById('tz-ic').textContent = '✨';
+  document.getElementById('tz-t').textContent  = '@' + u + ' détecté';
+  document.getElementById('tz-s').textContent  = 'Appuie pour ajouter instantanément';
+  document.getElementById('tap-zone').classList.add('ready');
+}
+function resetTZ() {
+  document.getElementById('tz-ic').textContent = '📋';
+  document.getElementById('tz-t').textContent  = 'Appuyer pour coller';
+  document.getElementById('tz-s').textContent  = 'Copie un lien Instagram puis appuie ici';
+  document.getElementById('tap-zone').classList.remove('ready');
 }
 
-function resetAdd(){
-addSt={u:null,url:null,b2b:false};
-document.getElementById(‘prev-wrap’).innerHTML=’’;
-document.getElementById(‘note-f’).style.display=‘none’;
-document.getElementById(‘b2b-f’).style.display=‘none’;
-document.getElementById(‘btn-add’).disabled=true;
-document.getElementById(‘inp-note’).value=’’;
-document.getElementById(‘b2b-tog’).classList.remove(‘on’);
-document.getElementById(‘tap-zone’).style.display=‘flex’;
-resetTZ();
+async function tzTap() {
+  const txt = clipCache || await readClip(); clipCache = null;
+  if (!txt || !isIG(txt)) { toast('📋', 'Aucun lien Instagram copié'); return; }
+  const u = exIG(txt);
+  if (!u) { toast('⚠️', 'Lien invalide'); return; }
+  if (DB.find(a => a.username === u)) { toast('⚠️', '@' + u + ' déjà dans la liste'); return; }
+  addState = { u, url: igUrl(u), b2b: false };
+  showPreview(u);
+  document.getElementById('add-fields').style.display = 'block';
+  document.getElementById('tap-zone').style.display   = 'none';
 }
 
-// URL PARAM (Shortcut)
-function checkParam(){
-const p=new URLSearchParams(location.search);
-const raw=p.get(‘add’)||p.get(‘u’);if(!raw)return;
-history.replaceState(null,’’,location.pathname);
-const u=exIG(decodeURIComponent(raw));if(!u)return;
-if(DB.find(a=>a.username===u)){toast(‘⚠️’,‘Déjà dans la liste’);return}
-DB.unshift({id:uid(),username:u,url:igUrl(u),note:’’,b2b:false,status:‘prospect’,addedAt:Date.now(),activeAt:null});
-save();updBadge();
-toast(‘✅’,’@’+u+’ ajouté !’);
-go(‘list’,document.querySelector(’[data-p=“list”]’));
+function showPreview(u) {
+  document.getElementById('prev-wrap').innerHTML = `
+    <div class="preview-card">
+      <div class="prev-av">${ini(u)}</div>
+      <div class="prev-info">
+        <div class="prev-name">@${u}</div>
+        <div class="prev-url">instagram.com/${u}</div>
+      </div>
+      <div class="prev-ok">✅</div>
+    </div>`;
 }
 
-// NAV
-function go(name,btn){
-const order=[‘add’,‘list’];
-const ni=order.indexOf(name);
-document.querySelectorAll(’.page’).forEach((p,i)=>{p.classList.remove(‘active’,‘left’);if(i<ni)p.classList.add(‘left’)});
-document.getElementById(‘p-’+name).classList.add(‘active’);
-document.querySelectorAll(’.nb’).forEach(b=>b.classList.remove(‘on’));
-btn.classList.add(‘on’);
-if(name===‘list’)renderList();
+/* ════════════════════════════════
+   URL PARAM (Shortcut iOS)
+════════════════════════════════ */
+function checkParam() {
+  const p = new URLSearchParams(location.search);
+  const raw = p.get('add') || p.get('u');
+  if (!raw) return;
+  history.replaceState(null, '', location.pathname);
+  const u = exIG(decodeURIComponent(raw));
+  if (!u) return;
+  if (DB.find(a => a.username === u)) { toast('⚠️', 'Déjà dans la liste'); return; }
+  DB.unshift(mkAcc(u, igUrl(u), '', false));
+  save(); renderList();
+  toast('✅', '@' + u + ' ajouté via Raccourci');
 }
 
-function updBadge(){document.getElementById(‘nb’).textContent=DB.length}
-
-// LIST
-function checkExpired(){
-const TWO_H=7200000;let d=false;
-DB.forEach(a=>{if(a.status===‘active_prospect’&&a.activeAt&&Date.now()-a.activeAt>TWO_H){a.status=‘prospect’;a.activeAt=null;d=true}});
-if(d)save();
+function mkAcc(username, url, note, b2b) {
+  return { id: uid(), username, url, note: note || '', b2b: !!b2b, status: 'prospect', addedAt: Date.now(), activeAt: null };
 }
 
-function renderList(){
-checkExpired();updBadge();
-const body=document.getElementById(‘list-body’);
-if(!DB.length){body.innerHTML=’<div class="empty"><div class="em-ic">📋</div><div class="em-t">Liste vide</div><div class="em-s">Copie un lien Instagram et appuie sur + pour ajouter un compte.</div></div>’;return}
-const act=DB.filter(a=>a.status===‘active_prospect’);
-const pro=DB.filter(a=>a.status===‘prospect’);
-const don=DB.filter(a=>a.status===‘done’);
-let h=’’;
-if(act.length)h+=’<div class="sec-hdr">En cours</div>’+act.map(rowH).join(’’);
-if(pro.length)h+=’<div class="sec-hdr">À prospecter</div>’+pro.map(rowH).join(’’);
-if(don.length)h+=’<div class="sec-hdr">Prospectés</div>’+don.map(rowH).join(’’);
-body.innerHTML=h;
-DB.forEach(a=>initSw(a.id));
+/* ════════════════════════════════
+   ADD
+════════════════════════════════ */
+function togB2B() {
+  addState.b2b = !addState.b2b;
+  document.getElementById('b2b-tog').classList.toggle('on', addState.b2b);
 }
 
-function rowH(a){
-const avc=a.status===‘active_prospect’?‘av gn act’:a.b2b?‘av bv’:‘av’;
-const pill=a.status===‘active_prospect’?’<span class="pill pa">En cours…</span>’:a.status===‘done’?’<span class="pill pd">Prospecté ✓</span>’:’<span class="pill pp">À prospecter</span>’;
-const b2bp=a.b2b?’<span class="pill pb">B2B</span>’:’’;
-const sub=a.note||‘instagram.com/’+a.username;
-const ring=a.status===‘active_prospect’?’<div class="av-ring"></div>’:’’;
-return`<div class="rw" id="rw-${a.id}"><div class="sw-bg" id="sw-${a.id}"><button class="sw-b sw-b2b" onclick="togB2BList('${a.id}')"><div class="si">🏢</div>B2B</button><button class="sw-b sw-nt" onclick="openNote('${a.id}')"><div class="si">📝</div>Note</button><button class="sw-b sw-dl" onclick="delAcc('${a.id}')"><div class="si">🗑</div>Suppr.</button></div><div class="ar ani" id="ar-${a.id}" ondblclick="dblTap('${a.id}')"><div class="${avc}">${ini(a.username)}${ring}</div><div class="ri"><div class="rn">@${a.username}</div><div class="rs">${sub}</div></div><div class="rr">${b2bp}${pill}</div></div></div>`;
+function doAdd() {
+  if (!addState.u) return;
+  const note = document.getElementById('inp-note').value.trim();
+  DB.unshift(mkAcc(addState.u, addState.url, note, addState.b2b));
+  save(); renderList();
+  toast('✅', '@' + addState.u + ' ajouté !');
+  resetAdd();
+  goPanel(0);
 }
 
-// SWIPE
-function initSw(id){
-const row=document.getElementById(‘ar-’+id);
-if(!row)return;
-const BW=216,SNAP=52;
-let x0=0,dx=0,go=false,open=false;
-row.addEventListener(‘touchstart’,e=>{if(swId&&swId!==id)closeSw(swId);x0=e.touches[0].clientX;dx=0;go=true;row.style.transition=‘none’},{passive:true});
-row.addEventListener(‘touchmove’,e=>{if(!go)return;dx=e.touches[0].clientX-x0;if(open)dx-=BW;dx=Math.max(-BW,Math.min(0,dx));row.style.transform=`translateX(${dx}px)`},{passive:true});
-row.addEventListener(‘touchend’,()=>{if(!go)return;go=false;row.style.transition=‘transform .26s cubic-bezier(.25,.46,.45,.94)’;if(dx<-SNAP){row.style.transform=`translateX(-${BW}px)`;open=true;swId=id}else{row.style.transform=‘none’;open=false;if(swId===id)swId=null}});
-}
-function closeSw(id){const r=document.getElementById(‘ar-’+id);if(!r)return;r.style.transition=‘transform .24s cubic-bezier(.25,.46,.45,.94)’;r.style.transform=‘none’;if(swId===id)swId=null}
-
-// ACTIONS
-function delAcc(id){DB=DB.filter(a=>a.id!==id);save();renderList();toast(‘🗑’,‘Supprimé’)}
-function togB2BList(id){const a=DB.find(a=>a.id===id);if(!a)return;a.b2b=!a.b2b;save();renderList();toast(a.b2b?‘🏢’:‘✓’,a.b2b?‘Marqué B2B’:‘B2B retiré’)}
-
-function openNote(id){
-noteId=id;const a=DB.find(a=>a.id===id);
-document.getElementById(‘note-ta’).value=a?.note||’’;
-document.getElementById(‘note-ov’).classList.add(‘on’);
-document.getElementById(‘note-sh’).classList.add(‘on’);
-closeSw(id);
-setTimeout(()=>document.getElementById(‘note-ta’).focus(),380);
-}
-function closeNote(){document.getElementById(‘note-ov’).classList.remove(‘on’);document.getElementById(‘note-sh’).classList.remove(‘on’);noteId=null}
-function saveNote(){if(!noteId)return;const a=DB.find(a=>a.id===noteId);if(a){a.note=document.getElementById(‘note-ta’).value.trim();save()}closeNote();renderList();toast(‘📝’,‘Note enregistrée’)}
-
-function dblTap(id){
-const a=DB.find(a=>a.id===id);if(!a)return;
-if(a.status===‘active_prospect’||a.status===‘done’){openCf(id);return}
-a.status=‘active_prospect’;a.activeAt=Date.now();save();renderList();
-toast(‘⏳’,‘Prospection lancée’);
-setTimeout(()=>window.open(a.url,’_blank’),200);
+function resetAdd() {
+  addState = { u: null, url: null, b2b: false };
+  document.getElementById('prev-wrap').innerHTML = '';
+  document.getElementById('add-fields').style.display = 'none';
+  document.getElementById('inp-note').value = '';
+  document.getElementById('b2b-tog').classList.remove('on');
+  document.getElementById('tap-zone').style.display = 'flex';
+  resetTZ();
 }
 
-function openCf(id){
-cfId=id;const a=DB.find(a=>a.id===id);if(!a)return;
-document.getElementById(‘cf-av’).textContent=ini(a.username);
-document.getElementById(‘cf-name’).textContent=’@’+a.username;
-const m=a.activeAt?Math.round((Date.now()-a.activeAt)/60000):0;
-document.getElementById(‘cf-meta’).textContent=a.status===‘done’?‘Déjà prospecté’:m<1?‘Prospection en cours…’:‘En cours depuis ‘+m+’ min’;
-document.getElementById(‘cf-ov’).classList.add(‘on’);
-document.getElementById(‘cf-sh’).classList.add(‘on’);
+/* ════════════════════════════════
+   PANEL NAVIGATION
+════════════════════════════════ */
+function goPanel(n) {
+  curPanel = n;
+  document.getElementById('slide-root').style.transform = n === 0 ? '' : 'translateX(-50%)';
+  // dots
+  document.getElementById('dot0').classList.toggle('on', n === 0);
+  document.getElementById('dot1').classList.toggle('on', n === 1);
+  document.getElementById('dot2').classList.toggle('on', n === 0);
+  document.getElementById('dot3').classList.toggle('on', n === 1);
+  if (n === 0) renderList();
 }
-function closeCf(){document.getElementById(‘cf-ov’).classList.remove(‘on’);document.getElementById(‘cf-sh’).classList.remove(‘on’);cfId=null}
-function markDone(){if(!cfId)return;const a=DB.find(a=>a.id===cfId);if(a){a.status=‘done’;a.activeAt=null;save()}closeCf();renderList();toast(‘✅’,‘Prospecté !’)}
-function resetP(){if(!cfId)return;const a=DB.find(a=>a.id===cfId);if(a){a.status=‘prospect’;a.activeAt=null;save()}closeCf();renderList();toast(‘↩’,‘Remis à prospecter’)}
 
-// TOAST
-let tt;
-function toast(ic,msg){document.getElementById(‘t-ic’).textContent=ic;document.getElementById(‘t-msg’).textContent=msg;const el=document.getElementById(‘toast’);el.classList.add(‘show’);clearTimeout(tt);tt=setTimeout(()=>el.classList.remove(‘show’),2400)}
+/* ════════════════════════════════
+   SWIPE GESTURE
+════════════════════════════════ */
+(function(){
+  let x0=0,y0=0,t0=0,moving=false;
+  const root = document.getElementById('slide-root');
+  document.addEventListener('touchstart', e => {
+    x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; t0 = Date.now(); moving = false;
+  }, { passive: true });
+  document.addEventListener('touchend', e => {
+    if (moving) return;
+    const dx = e.changedTouches[0].clientX - x0;
+    const dy = e.changedTouches[0].clientY - y0;
+    const dt = Date.now() - t0;
+    const vel = Math.abs(dx) / dt;
+    const intentional = Math.abs(dx) > Math.abs(dy) * 1.5;
+    if (!intentional) return;
+    const flick = vel > 0.35 && Math.abs(dx) > 30;
+    const drag  = Math.abs(dx) > 60;
+    if (!flick && !drag) return;
+    if (dx < 0 && curPanel === 0) goPanel(1);
+    if (dx > 0 && curPanel === 1) goPanel(0);
+  }, { passive: true });
+  document.addEventListener('touchmove', e => {
+    const dx = e.touches[0].clientX - x0;
+    const dy = e.touches[0].clientY - y0;
+    if (Math.abs(dx) > 8) moving = true;
+  }, { passive: true });
+})();
 
-// INIT
-updBadge();checkParam();prefetch();
-document.addEventListener(‘visibilitychange’,()=>{if(!document.hidden){checkExpired();if(document.getElementById(‘p-list’).classList.contains(‘active’))renderList()}});
+/* ════════════════════════════════
+   SEARCH
+════════════════════════════════ */
+function toggleSearch() {
+  const bar = document.getElementById('search-bar-list');
+  bar.classList.toggle('open');
+  if (bar.classList.contains('open')) {
+    document.getElementById('search-input').focus();
+  } else {
+    document.getElementById('search-input').value = '';
+    renderList();
+  }
+}
+
+/* ════════════════════════════════
+   EDIT MODE
+════════════════════════════════ */
+function toggleEdit() {
+  editMode = !editMode;
+  document.getElementById('btn-edit').classList.toggle('on', editMode);
+  document.getElementById('edit-banner').classList.toggle('on', editMode);
+  renderList();
+}
+
+/* ════════════════════════════════
+   LIST RENDER
+════════════════════════════════ */
+function checkExpired() {
+  const T2H = 7200000; let d = false;
+  DB.forEach(a => {
+    if (a.status === 'active_prospect' && a.activeAt && Date.now() - a.activeAt > T2H) {
+      a.status = 'prospect'; a.activeAt = null; d = true;
+    }
+  });
+  if (d) save();
+}
+
+function renderList() {
+  checkExpired();
+  const q = (document.getElementById('search-input')?.value || '').toLowerCase();
+  let data = q ? DB.filter(a => a.username.includes(q) || (a.note||'').toLowerCase().includes(q)) : [...DB];
+  const main = document.getElementById('list-main');
+  const ftxt = document.getElementById('list-footer-text');
+  ftxt.textContent = DB.length + ' compte' + (DB.length !== 1 ? 's' : '');
+
+  if (!data.length) {
+    main.innerHTML = `<div class="empty"><div class="em-ic">📋</div><div class="em-t">${q ? 'Aucun résultat' : 'Liste vide'}</div><div class="em-s">${q ? 'Essaie un autre terme' : 'Appuie sur + pour ajouter un compte Instagram'}</div></div>`;
+    return;
+  }
+
+  const active   = data.filter(a => a.status === 'active_prospect');
+  const prospect = data.filter(a => a.status === 'prospect');
+  const done     = data.filter(a => a.status === 'done');
+
+  let html = '';
+  if (active.length)   html += `<div class="section-label">En cours</div>` + active.map(cardHTML).join('');
+  if (prospect.length) html += `<div class="section-label">À prospecter</div>` + prospect.map(cardHTML).join('');
+  if (done.length)     html += `<div class="section-label">Prospectés</div>` + done.map(cardHTML).join('');
+
+  main.innerHTML = html;
+}
+
+function cardHTML(a) {
+  const statusLabel = { prospect: 'À prospecter', active_prospect: 'En cours…', done: 'Prospecté ✓' }[a.status];
+  const pillClass   = { prospect: 'pill-prospect', active_prospect: 'pill-active', done: 'pill-done' }[a.status];
+  const b2bPill     = a.b2b ? `<span class="pill-b2b">B2B</span>` : '';
+  const preview     = a.note || 'instagram.com/' + a.username;
+
+  return `
+  <button type="button" class="acc-card" id="card-${a.id}" data-confirm="Ajouté ✓" onclick="cardTap('${a.id}')">
+    <div class="card-av">${ini(a.username)}</div>
+    <div class="card-body">
+      <div class="card-name">@${a.username} ${a.b2b ? '🏢' : ''}</div>
+      <div class="card-preview">
+        ${b2bPill}
+        <span class="pill-status ${pillClass}">${statusLabel}</span>
+        <span>${preview}</span>
+      </div>
+    </div>
+    <div class="card-arrow">›</div>
+    <div class="edit-overlay ${editMode ? 'on' : ''}" id="eo-${a.id}">
+      <button type="button" class="eo-btn eo-edit" onclick="editCard(event,'${a.id}')">✏️ Modifier</button>
+      <button type="button" class="eo-btn eo-del"  onclick="delCard(event,'${a.id}')">🗑 Supprimer</button>
+    </div>
+  </button>`;
+}
+
+function cardTap(id) {
+  if (editMode) return; // edit overlay handles it
+  openDetail(id);
+}
+
+/* ════════════════════════════════
+   DETAIL
+════════════════════════════════ */
+function openDetail(id) {
+  detailId = id;
+  const a = DB.find(x => x.id === id); if (!a) return;
+  document.getElementById('detail-title').textContent = '@' + a.username;
+  document.getElementById('detail-footer').textContent = 'Ajouté le ' + new Date(a.addedAt).toLocaleDateString('fr');
+
+  const activeBar = a.status === 'active_prospect' ? `
+    <div class="active-bar">
+      <div class="active-pulse"></div>
+      Prospection en cours depuis ${Math.round((Date.now() - a.activeAt) / 60000)} min
+    </div>` : '';
+
+  const statusHTML = ['prospect','active_prospect','done'].map(s => {
+    const labels = { prospect:'📋 À prospecter', active_prospect:'⏳ En cours', done:'✅ Prospecté' };
+    const cls    = { prospect:'on-prospect', active_prospect:'on-active', done:'on-done' };
+    const on     = a.status === s ? cls[s] : '';
+    return `<button type="button" class="status-btn ${on}" onclick="setStatus('${s}')">${labels[s].split(' ')[0]}<br>${labels[s].split(' ').slice(1).join(' ')}</button>`;
+  }).join('');
+
+  document.getElementById('detail-body').innerHTML = `
+    ${activeBar}
+    <div class="detail-hero">
+      <div class="detail-av">${ini(a.username)}</div>
+      <div class="detail-info">
+        <div class="detail-name">@${a.username}</div>
+        <div class="detail-url">instagram.com/${a.username}</div>
+        <div class="detail-pills">
+          ${a.b2b ? '<span class="pill-b2b">B2B</span>' : ''}
+        </div>
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-label">Statut</div>
+      <div class="status-grid">${statusHTML}</div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-label">Note — appuie pour modifier</div>
+      <div class="note-box ${a.note ? '' : 'empty-note'}" onclick="openEditModal('${a.id}')">${a.note || 'Aucune note. Appuie pour en ajouter.'}</div>
+    </div>
+    <div class="action-row">
+      <button type="button" class="action-btn ab-ig" onclick="openIG()">Ouvrir Instagram ↗</button>
+      <button type="button" class="action-btn ab-del" onclick="confirmDelete('${a.id}')">Supprimer</button>
+    </div>`;
+
+  const overlay = document.getElementById('detail-overlay');
+  overlay.style.transform = 'translateX(0)';
+}
+
+function closeDetail() {
+  document.getElementById('detail-overlay').style.transform = 'translateX(100%)';
+  detailId = null;
+}
+
+function openIG() {
+  if (!detailId) return;
+  const a = DB.find(x => x.id === detailId); if (!a) return;
+  // Set active_prospect on open
+  if (a.status === 'prospect') { a.status = 'active_prospect'; a.activeAt = Date.now(); save(); }
+  window.open(a.url, '_blank');
+}
+
+function setStatus(s) {
+  if (!detailId) return;
+  const a = DB.find(x => x.id === detailId); if (!a) return;
+  a.status = s;
+  if (s === 'active_prospect') a.activeAt = Date.now();
+  else if (s !== 'active_prospect') a.activeAt = null;
+  save(); openDetail(detailId); renderList();
+  toast('✓', { prospect: 'À prospecter', active_prospect: 'En cours…', done: 'Prospecté ✓' }[s]);
+}
+
+function confirmDelete(id) {
+  if (confirm('Supprimer ce compte ?')) { delCard(null, id); closeDetail(); }
+}
+
+/* ════════════════════════════════
+   EDIT CARD (edit mode)
+════════════════════════════════ */
+function editCard(e, id) {
+  if (e) { e.stopPropagation(); e.preventDefault(); }
+  openEditModal(id);
+}
+
+function delCard(e, id) {
+  if (e) { e.stopPropagation(); e.preventDefault(); }
+  DB = DB.filter(a => a.id !== id);
+  save(); renderList();
+  toast('🗑', 'Supprimé');
+}
+
+/* ════════════════════════════════
+   MODAL (edit)
+════════════════════════════════ */
+function openEditModal(id) {
+  modalId = id;
+  const a = DB.find(x => x.id === id); if (!a) return;
+  modalB2B = a.b2b;
+  document.getElementById('m-note').value = a.note || '';
+  document.getElementById('m-b2b-tog').classList.toggle('on', modalB2B);
+  document.getElementById('modal-title').textContent = 'Modifier @' + a.username;
+  document.getElementById('modal-bg').classList.add('on');
+  setTimeout(() => document.getElementById('m-note').focus(), 350);
+}
+
+function closeModal(e) {
+  if (e && e.target !== document.getElementById('modal-bg')) return;
+  document.getElementById('modal-bg').classList.remove('on');
+  modalId = null;
+}
+
+function togModalB2B() {
+  modalB2B = !modalB2B;
+  document.getElementById('m-b2b-tog').classList.toggle('on', modalB2B);
+}
+
+function saveModal() {
+  if (!modalId) return;
+  const a = DB.find(x => x.id === modalId); if (!a) return;
+  a.note = document.getElementById('m-note').value.trim();
+  a.b2b  = modalB2B;
+  save();
+  document.getElementById('modal-bg').classList.remove('on');
+  modalId = null;
+  renderList();
+  if (detailId) openDetail(detailId);
+  toast('✅', 'Enregistré');
+}
+
+/* ════════════════════════════════
+   TOAST
+════════════════════════════════ */
+let toastT;
+function toast(ic, msg) {
+  document.getElementById('t-ic').textContent  = ic;
+  document.getElementById('t-msg').textContent = msg;
+  const el = document.getElementById('toast');
+  el.classList.add('show');
+  clearTimeout(toastT);
+  toastT = setTimeout(() => el.classList.remove('show'), 2400);
+}
+
+/* ════════════════════════════════
+   INIT
+════════════════════════════════ */
+renderList();
+checkParam();
+prefetch();
+
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) {
+    checkExpired();
+    renderList();
+  }
+});
 </script>
-
 </body>
 </html>
