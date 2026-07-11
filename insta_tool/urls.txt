@@ -1,0 +1,12 @@
+# Colle une URL de reel Instagram par ligne.
+# Les lignes vides et celles commençant par # sont ignorées.
+
+https://www.instagram.com/reel/DYrHzAstb8J/
+https://www.instagram.com/reel/DYtvjGftqWc/
+https://www.instagram.com/reel/DZYkEdwgeYb/
+https://www.instagram.com/reel/DXg6NabDS1k/
+https://www.instagram.com/reel/DXrR0hDDZwg/
+https://www.instagram.com/reel/DXAc4v1DShK/
+https://www.instagram.com/reel/DXrSYPqjZb0/
+https://www.instagram.com/reel/DX7fx1Ktsn5/
+https://www.instagram.com/reel/DXSWPzYja-7/
